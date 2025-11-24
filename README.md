@@ -18,6 +18,7 @@ First iteration focus was to understand how to use and program an Arduino, hence
 
 
 ## Repository Structure
+```
 WeatherStation_Project/
 ├───docs
 ├───src
@@ -27,6 +28,7 @@ WeatherStation_Project/
     ├───DHTtester_NoKit
     ├───BaroTest_NoKit
     └───ReadWrite
+```
 
 
 ## Getting Started
