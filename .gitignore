@@ -1,0 +1,47 @@
+# === Arduino Build Files ===
+*.elf
+*.hex
+*.bin
+*.eep
+
+# Arduino-generated build directory
+build/
+cmake-build*/
+*.map
+
+# === Temporary Files ===
+*.swp
+*.tmp
+*.log
+
+# === OS / Editor Files ===
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# === IDE / Editor Metadata ===
+
+# VS Code
+.vscode/
+
+# CLion / JetBrains
+.idea/
+cmake-build-*/
+
+# Combined
+*.pro.user
+*.user
+*.bak
+
+# === Git ===
+.gitignore~
