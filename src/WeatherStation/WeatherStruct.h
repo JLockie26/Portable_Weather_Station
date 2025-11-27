@@ -3,15 +3,15 @@
 #ifndef WeatherRecord_H
 #define WeatherRecord_H
 //--------------------------------------------------------------------
-#include "Classes/Date.h"
-#include "Classes/Time.h"
+#include "Date.h"
+#include "Time.h"
 //--------------------------------------------------------------------
 
 		/**
 		* @author Jordan Locke
 		* @version 01
-		* @typedef WeatherStruct
-		* @struct WeatherStruct
+		* @typedef WeatherRecord
+		* @struct WeatherRecord
 		* @brief Stores weather data collected by Arduino sensors as well as date and time.
 		 */
 
@@ -19,7 +19,7 @@ typedef struct WeatherRecord
 {
 	float ambAirTemp;
 	float humidity;
-	float pressureHpa;
+	int pressureHpa;
 	Date weatherDate;
 	Time weatherTime;
 
