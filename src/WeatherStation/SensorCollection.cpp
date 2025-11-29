@@ -18,6 +18,7 @@ void  collectDHT(DHT& dht, WeatherRecord& currentWeather)
   if(isnan(humid) || isnan(temp)) 
   {
     Serial.println(F("Failed to read from DHT sensor!"));
+    Serial.println("\n");
     return;
   }
   //Record Temp&Humid
@@ -32,6 +33,7 @@ void collectBMP(BMP280& bmp280, WeatherRecord& currentWeather)
   if(isnan(hPressure))
   {
     Serial.println(F("Failed to read from BMP sensor!"));
+    Serial.println("\n");
     return;
   }
 
