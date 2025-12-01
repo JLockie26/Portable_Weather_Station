@@ -15,9 +15,15 @@ void  collectDHT(DHT& dht, WeatherRecord& currentWeather)
   //Read and Check
   float temp = dht.readTemperature();
   float humid = dht.readHumidity();
-  if(isnan(humid) || isnan(temp)) 
+  if(isnan(temp)) 
   {
-    Serial.println(F("Failed to read from DHT sensor!"));
+    Serial.println(F("Failed to read from temp!"));
+    Serial.println("\n");
+    return;
+  }
+  if(isnan(humid)) 
+  {
+    Serial.println(F("Failed to read from humidity!"));
     Serial.println("\n");
     return;
   }
