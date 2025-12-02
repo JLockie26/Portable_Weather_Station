@@ -33,9 +33,9 @@ WeatherStation_Project/
 
 ## Getting Started
 1. Install Arduino IDE. Used to write .ino files and upload to Arduino. Visual Studio and VSCode have been used to write code outside .ino file. (There is a VSCode extension to write and upload to Arduino, but for beginners sake, Arduino IDE is best option)
-2. Install required libraries via Arduino IDE or download:
-    - [DHT Library](https://github.com/Seeed-Studio/Grove_Temperature_And_Humidity_Sensor)
-    - [BMP280 Library](https://github.com/Seeed-Studio/Grove_BMP280)
+2. Install required libraries via Arduino IDE (Recommended) or download:
+    - [Grove_Temperature_And_Humidity_Sensor](https://github.com/Seeed-Studio/Grove_Temperature_And_Humidity_Sensor)
+    - [Grove_-_Barometer_Sensor_BMP280](https://github.com/Seeed-Studio/Grove_BMP280)
     - Wire Library - This is included with Arduino IDE.
     - [u8g2 Library - For OLED Display](https://github.com/olikraus/u8g2)
 3. Download or clone repo.
