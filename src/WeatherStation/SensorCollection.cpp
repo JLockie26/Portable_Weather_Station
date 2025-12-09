@@ -4,9 +4,15 @@
 //--------------------------------------------------------------------
 
 //Collect date and time from built-in RTC. Date and Time will be hardcoded until system is connecting to web server
-void collectDateTime(WeatherRecord& currentWeather)
+void collectDateTime(WeatherRecord& currentWeather, RTCTime& currentTime)
 {
-	//Do nothing for now
+  //Set current weather's DateTime struct to current date and time
+  currentWeather.date.day = currentTime.getDayOfMonth();
+  currentWeather.date.month = Month2int(currentTime.getMonth());
+  currentWeather.date.year = currentTime.getYear();
+
+  currentWeather.date.hour = currentTime.getHour();
+  currentWeather.date.minute = currentTime.getMinutes();
 }
 
 //Collects temp & humidity values

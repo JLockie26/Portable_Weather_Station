@@ -27,4 +27,18 @@ void displayToScreen(U8G2_SSD1306_128X64_ALT0_F_HW_I2C& display, WeatherRecord& 
   display.sendBuffer();
 }
 
+void displayError(U8G2_SSD1306_128X64_ALT0_F_HW_I2C& display, String& error)
+{
+
+  display.setFlipMode(1);
+  display.clearBuffer();
+  display.setFont(u8g2_font_chroma48medium8_8r);
+
+  display.setCursor(0, 10);
+  display.print(error);
+
+  display.sendBuffer();
+
+}
+
 //--------------------------------------------------------------------
