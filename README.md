@@ -23,7 +23,6 @@ WeatherStation_Project/
 ├───docs
 ├───src
 │   └───WeatherStation
-│       └───Classes
 └───tests
     ├───DHTtester_NoKit
     ├───BaroTest_NoKit
@@ -38,6 +37,7 @@ WeatherStation_Project/
     - [Grove_-_Barometer_Sensor_BMP280](https://github.com/Seeed-Studio/Grove_BMP280)
     - Wire Library - This is included with Arduino IDE.
     - [u8g2 Library - For OLED Display](https://github.com/olikraus/u8g2)
+    - [SD by Arduino & Sparkfun](https://github.com/arduino-libraries/SD)
 3. Download or clone repo.
 4. Connect components (component list and wirechart WIP)
 5. Open src/WeatherStation.ino and upload to arduino!
