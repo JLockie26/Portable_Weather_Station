@@ -29,12 +29,9 @@ Version: 1.2
 #include "RTC.h"
 //--------------------------------------------------------------------
 #define SERIALPORT 9600 //Port number Arduino communicates to PC via serial
-#define DHTPIN 2 //Digital Pin DHT Sensor is connected to
 #define DHTTYPE DHT11 //Type of DHT sensor being used
+#define DHTPIN 2 //Digital Pin DHT Sensor is connected to
 #define BMDADDR 0x77 //I2C address of BMP sensor
-#define DHTCLOCK 3000 //Clock timer for DHT-related functions(ms)
-#define CLOCK 2000 //Standard clock timer(ms)
-#define LOGCLOCK 600000 //Data logging clock timer (10 min intervals in ms)
 //--------------------------------------------------------------------
 U8G2_SSD1306_128X64_ALT0_F_HW_I2C display(U8G2_R0, /* reset=*/ U8X8_PIN_NONE); //Type of Oled Screen, if you are using a different screen, reference U8g2 library for your screen and replace this variable
 DHT dht(DHTPIN, DHTTYPE);
@@ -42,6 +39,10 @@ BMP280 bmp280;
 WeatherRecord currentWeather;
 unsigned long lastDHT = 0;
 unsigned long lastUpdate = 0;
+unsigned long lastLog = 0;
+unsigned long DHTCLOCK = 3500;
+unsigned long CLOCK = 2000;
+unsigned long LOGCLOCK = 300000; //5 min interval test
 const int chipSelect = 4;
 //--------------------------------------------------------------------
 void setup() 
@@ -61,7 +62,7 @@ void setup()
   RTC.begin();
 
   //Start hard-coded time
-  RTCTime startTime(8, Month::DECEMBER, 2025, 12, 0, 0, DayOfWeek::MONDAY, SaveLight::SAVING_TIME_INACTIVE);
+  RTCTime startTime(8, Month::DECEMBER, 2025, 11, 50, 0, DayOfWeek::MONDAY, SaveLight::SAVING_TIME_INACTIVE);
   RTC.setTime(startTime);
 
 }
@@ -78,21 +79,22 @@ void loop()
   {
     lastDHT = now;
     collectDHT(dht, currentWeather);
-    collectDateTime(currentWeather, currentTime);
   }
-  
+
+
   if(now - lastUpdate >= CLOCK)
   {
     lastUpdate = now;
     collectBMP(bmp280, currentWeather);
+    collectDateTime(currentWeather, currentTime);
     displayToScreen(display, currentWeather);
   }
 
-  if(now - lastUpdate >= LOGCLOCK)
+  if(now - lastLog >= LOGCLOCK)
   {
-
-    //Log Data to SD card
-
+    lastLog = now;
+    Serial.println("Logging Data");
+    logWeatherData(currentWeather);
   }
-  
+
 }

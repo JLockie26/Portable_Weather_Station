@@ -34,8 +34,10 @@ void  collectDHT(DHT& dht, WeatherRecord& currentWeather)
     return;
   }
   //Record Temp&Humid
+  noInterrupts();
 	currentWeather.ambAirTemp = temp;
 	currentWeather.humidity = humid;
+  interrupts();
 }
 
 //Collects pressure values
