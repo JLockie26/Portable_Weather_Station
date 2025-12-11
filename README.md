@@ -23,7 +23,7 @@ WeatherStation_Project/
 ├───docs
 ├───src
 │   └───WeatherStation
-└───tests
+└───examples
     ├───DHTtester_NoKit
     ├───BaroTest_NoKit
     └───ReadWrite
