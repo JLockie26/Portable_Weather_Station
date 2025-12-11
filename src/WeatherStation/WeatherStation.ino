@@ -6,100 +6,95 @@ The main function/sketch for the portable weather station project.
 This project is intended as an extension of a university assignment and a personal challenge to hone programming skills and learn electronics.
 The purpose of this sketch is to initialise all pins and sensors connected to the Arduino before calling separate-
 C++ modules to collect, store, and display weather data.
-*/
 
-#include "DHT.h"
-#include "Seeed_BMP280.h"
+Author: Jordan Locke
+Version: 1.1
+- Modularised functions for collecting and displaying weather data
+
+Author: Jordan Locke
+Version: 1.2
+- Implemented SD card writing functionality
+*/
+//--------------------------------------------------------------------
 #include <Wire.h>
 #include <U8g2lib.h>
-//#include "WeatherStruct.h" - Set up to store weather data on SD card
-
-#define DHTPIN 3 //Digital Pin DHT Sensor is connected to
+#include <DHT.h>
+#include <Seeed_BMP280.h>
+#include <SD.h>
+//--------------------------------------------------------------------
+#include "WeatherStruct.h"
+#include "SensorCollection.h"
+#include "DisplayToScreen.h"
+#include "SensorLogging.h"
+#include "RTC.h"
+//--------------------------------------------------------------------
+#define SERIALPORT 9600 //Port number Arduino communicates to PC via serial
 #define DHTTYPE DHT11 //Type of DHT sensor being used
-
-U8G2_SSD1306_128X64_ALT0_F_HW_I2C display(U8G2_R0, /* reset=*/ U8X8_PIN_NONE); //Type of Oled Screen
-
+#define DHTPIN 2 //Digital Pin DHT Sensor is connected to
+#define BMDADDR 0x77 //I2C address of BMP sensor
+//--------------------------------------------------------------------
+U8G2_SSD1306_128X64_ALT0_F_HW_I2C display(U8G2_R0, /* reset=*/ U8X8_PIN_NONE); //Type of Oled Screen, if you are using a different screen, reference U8g2 library for your screen and replace this variable
 DHT dht(DHTPIN, DHTTYPE);
 BMP280 bmp280;
-
+WeatherRecord currentWeather;
+unsigned long lastDHT = 0;
+unsigned long lastUpdate = 0;
+unsigned long lastLog = 0;
+unsigned long DHTCLOCK = 3500;
+unsigned long CLOCK = 2000;
+unsigned long LOGCLOCK = 300000; //5 min interval test
+const int chipSelect = 4;
+//--------------------------------------------------------------------
 void setup() 
 {
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  Serial.begin(SERIALPORT);
   Wire.begin();
   Wire1.begin();
-  delay(50);
+  delay(50); //Gives time for I2C to initialise
   dht.begin();
-  if(!bmp280.init(0x77))
+  if(!bmp280.init(BMDADDR))
   {
     Serial.println("Pressure Sensor Error");
   }
+  initialiseSD(chipSelect);
   display.begin();
+  RTC.begin();
+
+  //Start hard-coded time
+  RTCTime startTime(8, Month::DECEMBER, 2025, 11, 50, 0, DayOfWeek::MONDAY, SaveLight::SAVING_TIME_INACTIVE);
+  RTC.setTime(startTime);
 
 }
 
 void loop() 
 {
-  // put your main code here, to run repeatedly:
-  
+  unsigned long now = millis();
+  RTCTime currentTime;
 
-  //Record Temp&Humid
-  float temp = dht.readTemperature();
-  float humid = dht.readHumidity();
+  RTC.getTime(currentTime);
 
-  //Record Baro Pressure (Hectopascals)
-  int hPressure = bmp280.getPressure() / 100;
-
-  // Check if any reads failed and exit early (to try again).
-  if(isnan(humid) || isnan(temp)) 
+  //Clock timing to ensure that DHT read timing isnt interrupted by other function calls
+  if(now - lastDHT >= DHTCLOCK)
   {
-    Serial.println(F("Failed to read from DHT sensor!"));
-    return;
+    lastDHT = now;
+    collectDHT(dht, currentWeather);
   }
 
-  if(isnan(hPressure))
+
+  if(now - lastUpdate >= CLOCK)
   {
-    Serial.println(F("Failed to read from BMP sensor!"));
-    return;
+    lastUpdate = now;
+    collectBMP(bmp280, currentWeather);
+    collectDateTime(currentWeather, currentTime);
+    displayToScreen(display, currentWeather);
   }
 
-/*
-  Serial.print(F("Temp: "));
-  Serial.print(temp);
-  Serial.println("°C");
-  Serial.print(F("Humid: "));
-  Serial.print(humid);
-  Serial.println("%");
+  if(now - lastLog >= LOGCLOCK)
+  {
+    lastLog = now;
+    Serial.println("Logging Data");
+    logWeatherData(currentWeather);
+  }
 
-  
-  Serial.print(F("Pressure: "));
-  Serial.print(hPressure);
-  Serial.println("hPa");
-*/
-
-  //Display it to Oled
-  display.setFlipMode(1);
-  display.clearBuffer(); //Clears internal memory
-  display.setFont(u8g2_font_chroma48medium8_8r);
-
-  display.setCursor(0, 10);
-  display.print("Temp: ");
-  display.print(temp);
-  display.print("C");
-
-  display.setCursor(0, 20);
-  display.print("Humid: ");
-  display.print(humid);
-  display.print("%");
-
-  display.setCursor(0, 30);
-  display.print("Pres: ");
-  display.print(hPressure);
-  display.print("hPa");
-
-  display.sendBuffer();
-
-
-  Serial.println("\n");
-  delay(2000);
 }
