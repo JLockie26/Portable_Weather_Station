@@ -25,7 +25,7 @@ void initialiseSD(const int chipSelect)
 void logWeatherData(WeatherRecord& currentWeather)
 {
   File dataFile;
-  String fileName = "test.csv";
+  String fileName = "ArduinoTest.csv";
 	
   if(!SD.exists(fileName))
     newFile(fileName);
@@ -56,9 +56,6 @@ void logWeatherData(WeatherRecord& currentWeather)
   else
     Serial.println("Error Opening File");
 
-  //Calling this to test that data is being written to SD card without physically checking SD card
-  testLog(fileName);
-
 }
 
 void newFile(String& fileName)
@@ -74,6 +71,7 @@ void newFile(String& fileName)
   
 }
 
+/*
 void testLog(String& fileName)
 {
   File dataFile = SD.open(fileName, FILE_READ);
@@ -91,3 +89,4 @@ void testLog(String& fileName)
     Serial.println("Error Opening File");
 
 }
+*/
