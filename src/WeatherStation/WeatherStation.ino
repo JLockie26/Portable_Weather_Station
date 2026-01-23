@@ -76,7 +76,7 @@ void setup()
   RTC.begin();
 
   //Start hard-coded time
-  RTCTime startTime(8, Month::DECEMBER, 2025, 11, 50, 0, DayOfWeek::MONDAY, SaveLight::SAVING_TIME_INACTIVE);
+  RTCTime startTime(24, Month::January, 2025, 12, 0, 0, DayOfWeek::SATURDAY, SaveLight::SAVING_TIME_INACTIVE);
   RTC.setTime(startTime);
 
   
