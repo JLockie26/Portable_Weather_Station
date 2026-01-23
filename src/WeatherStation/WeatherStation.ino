@@ -17,7 +17,8 @@ Version: 1.2
 
 Author: Jordan Locke
 Version 1.3
-- 
+- Changed graphics library so OLED screen isn't hogging Serial Data Line
+- Modified main logic so weather is only being collected, displayed, and logged every 5 mins (will be changed to 10 mins eventually).
 */
 //--------------------------------------------------------------------
 #include <Wire.h>
@@ -45,14 +46,19 @@ DHT dht(DHTPIN, DHTTYPE);
 BMP280 bmp280;
 WeatherRecord currentWeather;
 unsigned long lastDHT = 0;
-unsigned long lastUpdate = 0;
 unsigned long lastLog = 0;
-unsigned long DHTCLOCK = 3500;
-unsigned long CLOCK = 2000;
-unsigned long LOGCLOCK = 600000; //5 min interval test
+unsigned long LOGCLOCK = 300000; //5 min interval test
 const int chipSelect = 4;
 unsigned long now;
 RTCTime currentTime;
+
+enum SampleState
+{
+  IDLE,
+  DHT_COLLECTED,
+  COMPLETE
+};
+SampleState sampleState = SampleState::IDLE;
 //--------------------------------------------------------------------
 void setup() 
 {
@@ -84,8 +90,8 @@ void setup()
   logWeatherData(currentWeather);
 
   lastDHT = now;
-  lastUpdate = now;
   lastLog = now;
+  sampleState = SampleState::IDLE;
 
 
 }
@@ -95,32 +101,32 @@ void loop()
   RTC.getTime(currentTime);
   now = millis();
 
-//Log data every 5 mins
-  if(now - lastLog >= LOGCLOCK)
+  //Non-blocking delay between DHT capture and other sensors
+  if(sampleState == SampleState::IDLE && now - lastLog >= LOGCLOCK)
   {
-    //Non-blocking delay between DHT capture and other sensors
-    if(now - lastDHT >= DHTCLOCK)
-    {
-      lastDHT = now;
-      Serial.println("Collecting DHT");
-      collectDHT(dht, currentWeather);
-    }
-
-
-    if(now - lastUpdate >= CLOCK)
-    {
-      lastUpdate = now;
-      Serial.println("Collecting BMP");
-      collectBMP(bmp280, currentWeather);
-      Serial.println("Collecting Date");
-      collectDateTime(currentWeather, currentTime);
-      Serial.println("Displaying");
-      displayToScreen(display, currentWeather);
-    }
-
-    lastLog = now;
-    Serial.println("Logging Data");
-    logWeatherData(currentWeather);
+    Serial.println("Collecting DHT");
+    collectDHT(dht, currentWeather);
+    lastDHT = now;
+    sampleState = SampleState::DHT_COLLECTED;
   }
+
+
+  if(sampleState == SampleState::DHT_COLLECTED)
+  {
+    Serial.println("Collecting Other Data & Displaying");
+    collectBMP(bmp280, currentWeather);
+    collectDateTime(currentWeather, currentTime);
+    displayToScreen(display, currentWeather);
+    sampleState = SampleState::COMPLETE;
+  }
+
+  if(sampleState == SampleState::COMPLETE)
+  {
+    Serial.println("Logging to SD Card");
+    logWeatherData(currentWeather);
+    lastLog = now;
+    sampleState = SampleState::IDLE;
+  }
+  
 
 }
