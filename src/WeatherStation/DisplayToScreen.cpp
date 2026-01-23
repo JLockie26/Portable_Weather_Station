@@ -3,42 +3,31 @@
 #include "DisplayToScreen.h"
 //--------------------------------------------------------------------
 
-void displayToScreen(U8G2_SSD1306_128X64_ALT0_F_HW_I2C& display, WeatherRecord& currentWeather)
+void startDisplay(Oled_Screen& display)
 {
+  display.begin();
   display.setFlipMode(1);
-  display.clearBuffer(); //Clears internal memory
-  display.setFont(u8g2_font_chroma48medium8_8r);
+  display.setFont(u8x8_font_chroma48medium8_r);
+}
 
-  display.setCursor(0, 10);
+//--------------------------------------------------------------------
+void displayToScreen(Oled_Screen& display, WeatherRecord& currentWeather)
+{ 
+  display.clearDisplay();
+
+  display.setCursor(0, 0);
   display.print("Temp: ");
   display.print(currentWeather.ambAirTemp);
   display.print("C");
 
-  display.setCursor(0, 20);
+  display.setCursor(0, 10);
   display.print("Humid: ");
   display.print(currentWeather.humidity);
   display.print("%");
 
-  display.setCursor(0, 30);
+  display.setCursor(0, 20);
   display.print("Pres: ");
   display.print(currentWeather.pressureHpa);
   display.print("hPa");
-
-  display.sendBuffer();
 }
-
-void displayError(U8G2_SSD1306_128X64_ALT0_F_HW_I2C& display, String& error)
-{
-
-  display.setFlipMode(1);
-  display.clearBuffer();
-  display.setFont(u8g2_font_chroma48medium8_8r);
-
-  display.setCursor(0, 10);
-  display.print(error);
-
-  display.sendBuffer();
-
-}
-
 //--------------------------------------------------------------------
