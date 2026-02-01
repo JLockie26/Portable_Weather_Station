@@ -34,17 +34,15 @@ void  collectDHT(DHT& dht, WeatherRecord& currentWeather)
     return;
   }
   //Record Temp&Humid
-  noInterrupts();
 	currentWeather.ambAirTemp = temp;
 	currentWeather.humidity = humid;
-  interrupts();
 }
 
 //Collects pressure values
 void collectBMP(BMP280& bmp280, WeatherRecord& currentWeather)
 {
-  int hPressure = bmp280.getPressure() / 100;
-  if(isnan(hPressure))
+  float hPressure = bmp280.getPressure() / 100.0f;
+  if(isnan(hPressure) || hPressure <= 0.0f)
   {
     Serial.println(F("Failed to read from BMP sensor!"));
     Serial.println("\n");
@@ -54,5 +52,4 @@ void collectBMP(BMP280& bmp280, WeatherRecord& currentWeather)
   //Record Baro Pressure (Hectopascals)
   currentWeather.pressureHpa = hPressure;
 }
-
 //--------------------------------------------------------------------

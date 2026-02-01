@@ -47,7 +47,9 @@ BMP280 bmp280;
 WeatherRecord currentWeather;
 unsigned long lastDHT = 0;
 unsigned long lastLog = 0;
-unsigned long LOGCLOCK = 300000; //5 min interval test
+const unsigned long LOGCLOCK = 300000; //5 min interval test
+const unsigned long STATE_DELAY = 20;
+static unsigned long stateTimeStamp = 0;
 const int chipSelect = 4;
 unsigned long now;
 RTCTime currentTime;
@@ -56,6 +58,8 @@ enum SampleState
 {
   IDLE,
   DHT_COLLECTED,
+  BMP_COLLECTED,
+  DISPLAY_COMPLETED,
   COMPLETE
 };
 SampleState sampleState = SampleState::IDLE;
@@ -76,7 +80,7 @@ void setup()
   RTC.begin();
 
   //Start hard-coded time
-  RTCTime startTime(24, Month::January, 2025, 12, 0, 0, DayOfWeek::SATURDAY, SaveLight::SAVING_TIME_INACTIVE);
+  RTCTime startTime(28, Month::JANUARY, 2025, 12, 0, 0, DayOfWeek::SATURDAY, SaveLight::SAVING_TIME_INACTIVE);
   RTC.setTime(startTime);
 
   
@@ -106,27 +110,41 @@ void loop()
   {
     Serial.println("Collecting DHT");
     collectDHT(dht, currentWeather);
-    lastDHT = now;
+    stateTimeStamp = now;
     sampleState = SampleState::DHT_COLLECTED;
   }
 
 
-  if(sampleState == SampleState::DHT_COLLECTED)
+  else if(sampleState == SampleState::DHT_COLLECTED && now - stateTimeStamp >= STATE_DELAY)
   {
-    Serial.println("Collecting Other Data & Displaying");
+    Serial.println("Collecting BMP");
     collectBMP(bmp280, currentWeather);
-    collectDateTime(currentWeather, currentTime);
+    stateTimeStamp = now;
+    sampleState = SampleState::BMP_COLLECTED;
+  }
+
+  else if(sampleState == SampleState::BMP_COLLECTED && now - stateTimeStamp >= STATE_DELAY)
+  {
+    Serial.println("Displaying Data");
     displayToScreen(display, currentWeather);
+    stateTimeStamp = now;
+    sampleState = SampleState::DISPLAY_COMPLETED;
+  }
+
+  else if(sampleState == SampleState::DISPLAY_COMPLETED && now - stateTimeStamp >= STATE_DELAY)
+  {
+    Serial.println("Logging Time");
+    collectDateTime(currentWeather, currentTime);
+    stateTimeStamp = now;
     sampleState = SampleState::COMPLETE;
   }
 
-  if(sampleState == SampleState::COMPLETE)
+  else if(sampleState == SampleState::COMPLETE && now - stateTimeStamp >= STATE_DELAY)
   {
     Serial.println("Logging to SD Card");
     logWeatherData(currentWeather);
     lastLog = now;
     sampleState = SampleState::IDLE;
   }
-  
 
 }
