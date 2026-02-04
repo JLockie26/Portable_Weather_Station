@@ -19,7 +19,7 @@ void updateHumid(Oled_Screen& display, const int& newHumid);
 void updatePress(Oled_Screen& display, const float& newPress);
 
 //Displaying to console for testing purposes
-void displayToConsole(WeatherRecord& currentWeather);
+void displayToConsole(const WeatherRecord& currentWeather);
 
 //--------------------------------------------------------------------
 #endif //DisplayToScreen

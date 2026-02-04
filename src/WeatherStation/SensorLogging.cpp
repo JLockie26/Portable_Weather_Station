@@ -22,7 +22,7 @@ void initialiseSD(const int chipSelect)
 
 }
 
-void logWeatherData(WeatherRecord& currentWeather)
+void logWeatherData(const WeatherRecord& currentWeather)
 {
   File dataFile;
   String fileName = "ArdTest.csv";

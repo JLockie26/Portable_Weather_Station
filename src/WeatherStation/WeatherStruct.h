@@ -27,9 +27,9 @@ typedef struct DateTime
 
 typedef struct WeatherRecord
 {
-	int ambAirTemp;
-	int humidity;
-	float pressureHpa;
+	int ambAirTemp; //Degrees Celcius
+	int humidity; //Percentage
+	float pressureHpa; //HectoPascals (hPa)
 	DateTime date;
 } WeatherRecord;
 

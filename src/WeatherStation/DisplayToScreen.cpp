@@ -39,7 +39,7 @@ void updatePress(Oled_Screen& display, const float& newPress)
   display.print("hPa");
 }
 //--------------------------------------------------------------------
-void displayToConsole(WeatherRecord& currentWeather)
+void displayToConsole(const WeatherRecord& currentWeather)
 {
   //Temp
   Serial.print("Temp: ");

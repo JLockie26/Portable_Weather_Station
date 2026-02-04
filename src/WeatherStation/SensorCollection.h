@@ -15,4 +15,5 @@ void collectDHT(DHT& dht, WeatherRecord& currentWeather);
 
 void collectBMP(BMP280& bmp280, WeatherRecord& currentWeather);
 
+//--------------------------------------------------------------------
 #endif
