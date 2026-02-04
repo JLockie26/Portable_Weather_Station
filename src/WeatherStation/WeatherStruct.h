@@ -13,10 +13,11 @@
 		*				 Date and Time classes are now structs. RTC takes care of controlling date & time validation
 		*
 		*	@author Jordan Locke
-		*	@version 01
+		*	@version 02
 		*	@typedef DateTime
 		*	@struct DateTime
 		*	@brief Stores date time data collected by the RTC module
+			- Data types of struct members altered for more accurate results.
 		 */
 
 typedef struct DateTime

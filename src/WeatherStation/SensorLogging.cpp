@@ -21,7 +21,7 @@ void initialiseSD(const int chipSelect)
 
 
 }
-
+//--------------------------------------------------------------------
 void logWeatherData(const WeatherRecord& currentWeather)
 {
   File dataFile;
@@ -68,5 +68,5 @@ void newFile(String& fileName)
   }
   else
     Serial.println("Error Opening File Line 70");
-  
 }
+//--------------------------------------------------------------------

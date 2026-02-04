@@ -11,14 +11,17 @@ Author: Jordan Locke
 Version: 1.1
 - Modularised functions for collecting and displaying weather data
 
-Author: Jordan Locke
 Version: 1.2
 - Implemented SD card writing functionality
 
-Author: Jordan Locke
 Version 1.3
 - Changed graphics library so OLED screen isn't hogging Serial Data Line
 - Modified main logic so weather is only being collected, displayed, and logged every 5 mins (will be changed to 10 mins eventually).
+
+Version 1.4
+- State machine implemented to help timing of measurements and logging data.
+- Temporarily removed OLED functionality to stop BMP interference.
+
 */
 //--------------------------------------------------------------------
 #include <Wire.h>

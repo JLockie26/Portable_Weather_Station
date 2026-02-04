@@ -3,7 +3,7 @@
 #include "SensorCollection.h"
 //--------------------------------------------------------------------
 
-//Collect date and time from built-in RTC. Date and Time will be hardcoded until system is connecting to web server
+//Collect date and time from built-in RTC. Date and Time will be hardcoded until system is connected to web server
 void collectDateTime(WeatherRecord& currentWeather, RTCTime& currentTime)
 {
   //Set current weather's DateTime struct to current date and time
