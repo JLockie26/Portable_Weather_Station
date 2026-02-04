@@ -45,13 +45,14 @@ Oled_Screen display(_PIN_SCL, _PIN_SDA, U8X8_PIN_NONE);
 DHT dht(DHTPIN, DHTTYPE);
 BMP280 bmp280;
 WeatherRecord currentWeather;
-unsigned long lastDHT = 0;
 unsigned long lastLog = 0;
 const unsigned long LOGCLOCK = 300000; //5 min interval test
 const unsigned long STATE_DELAY = 20;
 static unsigned long stateTimeStamp = 0;
 const int chipSelect = 4;
 unsigned long now;
+int lastTemp, lastHumid = 0;
+float lastPress = 0.0f;
 RTCTime currentTime;
 
 enum SampleState
@@ -59,6 +60,7 @@ enum SampleState
   IDLE,
   DHT_COLLECTED,
   BMP_COLLECTED,
+  BUS_IDLE,
   DISPLAY_COMPLETED,
   COMPLETE
 };
@@ -66,44 +68,33 @@ SampleState sampleState = SampleState::IDLE;
 //--------------------------------------------------------------------
 void setup() 
 {
-  // put your setup code here, to run once:
+  //Initialise all components
   Serial.begin(SERIALPORT);
   Wire.begin();
   delay(50); //Gives time for I2C to initialise
-  startDisplay(display);
   dht.begin();
   if(!bmp280.init(BMDADDR))
   {
     Serial.println("Pressure Sensor Error");
   }
   initialiseSD(chipSelect);
+  startDisplay(display);
   RTC.begin();
 
   //Start hard-coded time
   RTCTime startTime(28, Month::JANUARY, 2025, 12, 0, 0, DayOfWeek::SATURDAY, SaveLight::SAVING_TIME_INACTIVE);
   RTC.setTime(startTime);
 
-  
-  //Initial collection of sensor information, display, and log sensor data
-  RTC.getTime(currentTime);
-  now = millis();
-  collectDHT(dht, currentWeather);
-  collectBMP(bmp280, currentWeather);
-  collectDateTime(currentWeather, currentTime);
-  displayToScreen(display, currentWeather);
-  logWeatherData(currentWeather);
-
-  lastDHT = now;
-  lastLog = now;
+  //Begin initial log
+  lastLog = millis() - LOGCLOCK;
   sampleState = SampleState::IDLE;
-
-
 }
 
 void loop() 
 {
   RTC.getTime(currentTime);
   now = millis();
+  
 
   //Non-blocking delay between DHT capture and other sensors
   if(sampleState == SampleState::IDLE && now - lastLog >= LOGCLOCK)
@@ -125,8 +116,36 @@ void loop()
 
   else if(sampleState == SampleState::BMP_COLLECTED && now - stateTimeStamp >= STATE_DELAY)
   {
-    Serial.println("Displaying Data");
-    displayToScreen(display, currentWeather);
+    sampleState = SampleState::BUS_IDLE;
+    stateTimeStamp = now;
+  }
+
+  else if(sampleState == SampleState::BUS_IDLE && now - stateTimeStamp >= STATE_DELAY)
+  {
+    //Only update the measurements that change (should avoid sending too much data over SDA hopefully)
+    if(currentWeather.ambAirTemp != lastTemp)
+    {
+      Serial.println("Updating Temp");
+      updateTemp(display, currentWeather.ambAirTemp);
+      lastTemp = currentWeather.ambAirTemp;
+    }
+      
+    
+    if(currentWeather.humidity != lastHumid)
+    {
+      Serial.println("Updating Humid");
+      updateHumid(display, currentWeather.humidity);
+      lastHumid = currentWeather.humidity;
+    }
+      
+
+    if(fabs(currentWeather.pressureHpa - lastPress) > 0.1f)
+    {
+      Serial.println("Updating Press");
+      updatePress(display, currentWeather.pressureHpa);
+      lastPress = currentWeather.pressureHpa;
+    }
+      
     stateTimeStamp = now;
     sampleState = SampleState::DISPLAY_COMPLETED;
   }
@@ -146,5 +165,4 @@ void loop()
     lastLog = now;
     sampleState = SampleState::IDLE;
   }
-
 }

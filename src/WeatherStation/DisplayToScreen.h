@@ -13,8 +13,13 @@
 //Initialises display, sets font, and orientation
 void startDisplay(Oled_Screen& display);
 
-//Takes reference for screen and current weather struct, displays struct data to screen
-void displayToScreen(Oled_Screen& display, WeatherRecord& currentWeather);
+//Update respective measurement from WeatherRecord if values change
+void updateTemp(Oled_Screen& display, const int& newTemp);
+void updateHumid(Oled_Screen& display, const int& newHumid);
+void updatePress(Oled_Screen& display, const float& newPress);
+
+//Displaying to console for testing purposes
+void displayToConsole(WeatherRecord& currentWeather);
 
 //--------------------------------------------------------------------
 #endif //DisplayToScreen

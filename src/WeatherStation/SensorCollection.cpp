@@ -14,7 +14,7 @@ void collectDateTime(WeatherRecord& currentWeather, RTCTime& currentTime)
   currentWeather.date.hour = currentTime.getHour();
   currentWeather.date.minute = currentTime.getMinutes();
 }
-
+//--------------------------------------------------------------------
 //Collects temp & humidity values
 void  collectDHT(DHT& dht, WeatherRecord& currentWeather)
 {
@@ -24,20 +24,18 @@ void  collectDHT(DHT& dht, WeatherRecord& currentWeather)
   if(isnan(temp)) 
   {
     Serial.println(F("Failed to read from temp!"));
-    Serial.println("\n");
     return;
   }
-  if(isnan(humid)) 
+  else if(isnan(humid))
   {
-    Serial.println(F("Failed to read from humidity!"));
-    Serial.println("\n");
+    Serial.println("Failed to read humid!");
     return;
   }
-  //Record Temp&Humid
+  //Record
 	currentWeather.ambAirTemp = temp;
-	currentWeather.humidity = humid;
+  currentWeather.humidity = humid;
 }
-
+//--------------------------------------------------------------------
 //Collects pressure values
 void collectBMP(BMP280& bmp280, WeatherRecord& currentWeather)
 {
@@ -45,10 +43,8 @@ void collectBMP(BMP280& bmp280, WeatherRecord& currentWeather)
   if(isnan(hPressure) || hPressure <= 0.0f)
   {
     Serial.println(F("Failed to read from BMP sensor!"));
-    Serial.println("\n");
     return;
   }
-
   //Record Baro Pressure (Hectopascals)
   currentWeather.pressureHpa = hPressure;
 }
