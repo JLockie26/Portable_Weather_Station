@@ -78,7 +78,7 @@ void setup()
     Serial.println("Pressure Sensor Error");
   }
   initialiseSD(chipSelect);
-  startDisplay(display);
+  //startDisplay(display);
   RTC.begin();
 
   //Start hard-coded time
@@ -122,6 +122,7 @@ void loop()
 
   else if(sampleState == SampleState::BUS_IDLE && now - stateTimeStamp >= STATE_DELAY)
   {
+    /*
     //Only update the measurements that change (should avoid sending too much data over SDA hopefully)
     if(currentWeather.ambAirTemp != lastTemp)
     {
@@ -145,6 +146,8 @@ void loop()
       updatePress(display, currentWeather.pressureHpa);
       lastPress = currentWeather.pressureHpa;
     }
+    */
+    displayToConsole(currentWeather);
       
     stateTimeStamp = now;
     sampleState = SampleState::DISPLAY_COMPLETED;
