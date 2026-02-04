@@ -4,13 +4,22 @@
 #define DisplayToScreen_H
 //--------------------------------------------------------------------
 //#include <string>
-#include <U8g2lib.h>
+#include <U8x8lib.h>
 #include "WeatherStruct.h"
 //--------------------------------------------------------------------
+#define Oled_Screen U8X8_SSD1306_128X64_NONAME_HW_I2C
+//--------------------------------------------------------------------
 
-//Takes reference for screen and current weather struct, displays struct data to screen
-void displayToScreen(U8G2_SSD1306_128X64_ALT0_F_HW_I2C& display, WeatherRecord& currentWeather);
-void displayError(String& error);
+//Initialises display, sets font, and orientation
+void startDisplay(Oled_Screen& display);
+
+//Update respective measurement from WeatherRecord if values change
+void updateTemp(Oled_Screen& display, const int& newTemp);
+void updateHumid(Oled_Screen& display, const int& newHumid);
+void updatePress(Oled_Screen& display, const float& newPress);
+
+//Displaying to console for testing purposes
+void displayToConsole(const WeatherRecord& currentWeather);
 
 //--------------------------------------------------------------------
 #endif //DisplayToScreen

@@ -21,11 +21,11 @@ void initialiseSD(const int chipSelect)
 
 
 }
-
-void logWeatherData(WeatherRecord& currentWeather)
+//--------------------------------------------------------------------
+void logWeatherData(const WeatherRecord& currentWeather)
 {
   File dataFile;
-  String fileName = "ArduinoTest.csv";
+  String fileName = "ArdTest.csv";
 	
   if(!SD.exists(fileName))
     newFile(fileName);
@@ -54,7 +54,7 @@ void logWeatherData(WeatherRecord& currentWeather)
     dataFile.close();
   }
   else
-    Serial.println("Error Opening File");
+    Serial.println("Error Opening File Line 57");
 
 }
 
@@ -67,26 +67,6 @@ void newFile(String& fileName)
     dataFile.close();
   }
   else
-    Serial.println("Error Opening File");
-  
+    Serial.println("Error Opening File Line 70");
 }
-
-/*
-void testLog(String& fileName)
-{
-  File dataFile = SD.open(fileName, FILE_READ);
-  if(dataFile)
-  {
-
-    // read from the file until there's nothing else in it:
-    while (dataFile.available()) {
-      Serial.write(dataFile.read());
-    }
-
-    dataFile.close();
-  }
-  else
-    Serial.println("Error Opening File");
-
-}
-*/
+//--------------------------------------------------------------------

@@ -3,7 +3,7 @@
 #include "SensorCollection.h"
 //--------------------------------------------------------------------
 
-//Collect date and time from built-in RTC. Date and Time will be hardcoded until system is connecting to web server
+//Collect date and time from built-in RTC. Date and Time will be hardcoded until system is connected to web server
 void collectDateTime(WeatherRecord& currentWeather, RTCTime& currentTime)
 {
   //Set current weather's DateTime struct to current date and time
@@ -14,7 +14,7 @@ void collectDateTime(WeatherRecord& currentWeather, RTCTime& currentTime)
   currentWeather.date.hour = currentTime.getHour();
   currentWeather.date.minute = currentTime.getMinutes();
 }
-
+//--------------------------------------------------------------------
 //Collects temp & humidity values
 void  collectDHT(DHT& dht, WeatherRecord& currentWeather)
 {
@@ -24,35 +24,28 @@ void  collectDHT(DHT& dht, WeatherRecord& currentWeather)
   if(isnan(temp)) 
   {
     Serial.println(F("Failed to read from temp!"));
-    Serial.println("\n");
     return;
   }
-  if(isnan(humid)) 
+  else if(isnan(humid))
   {
-    Serial.println(F("Failed to read from humidity!"));
-    Serial.println("\n");
+    Serial.println("Failed to read humid!");
     return;
   }
-  //Record Temp&Humid
-  noInterrupts();
+  //Record
 	currentWeather.ambAirTemp = temp;
-	currentWeather.humidity = humid;
-  interrupts();
+  currentWeather.humidity = humid;
 }
-
+//--------------------------------------------------------------------
 //Collects pressure values
 void collectBMP(BMP280& bmp280, WeatherRecord& currentWeather)
 {
-  int hPressure = bmp280.getPressure() / 100;
-  if(isnan(hPressure))
+  float hPressure = bmp280.getPressure() / 100.0f;
+  if(isnan(hPressure) || hPressure <= 0.0f)
   {
     Serial.println(F("Failed to read from BMP sensor!"));
-    Serial.println("\n");
     return;
   }
-
   //Record Baro Pressure (Hectopascals)
   currentWeather.pressureHpa = hPressure;
 }
-
 //--------------------------------------------------------------------

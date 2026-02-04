@@ -6,15 +6,13 @@ The initial assignment had students take weather data produced by Murdoch Univer
 Goals of this repository:
 - Show progression of features over time.
 - Demonstrate and revise knowledge of OOP, Data Structures & Abstraction, and Web Development.
-- Learn and understand more about computer hardware.
+- Learn and understand more about computer hardware and systems programming.
 
 
 ## Features (current iteration)
 - Reads temperature(Celsius), humidity, and air pressure(Hectopascals).
-- Logs readings to serial (SD card logging in progress)
-- Outputs current readings to OLED display
-
-First iteration focus was to understand how to use and program an Arduino, hence the simple coding. Next iteration will focus on introducing SD card storage and modular code.
+- Logs measurements to SD Card
+- OLED functionality temporarily removed. Screen was causing interference issues with BMP280 sensor.
 
 
 ## Repository Structure
@@ -57,6 +55,7 @@ WeatherStation_Project/
 
 ## Future Additions
 - ~~SD card logging - To write to a CSV file that will be processed on uni assignment program~~(program will not be included in repo as to avoid academic misconduct)
+- Error logs displayed on OLED screen for when hooked up to battery pack
 - Wireless transmission of weather data to web server
 - Storing, processing, and comparing weather data on web server
 - Sensor upgrades & additional sensors (air quality, rain detection, soil humidity, etc)
