@@ -57,6 +57,7 @@ WeatherStation_Project/
 
 ## Future Additions
 - ~~SD card logging - To write to a CSV file that will be processed on uni assignment program~~(program will not be included in repo as to avoid academic misconduct)
+- Error logs displayed on OLED screen for when hooked up to battery pack
 - Wireless transmission of weather data to web server
 - Storing, processing, and comparing weather data on web server
 - Sensor upgrades & additional sensors (air quality, rain detection, soil humidity, etc)
