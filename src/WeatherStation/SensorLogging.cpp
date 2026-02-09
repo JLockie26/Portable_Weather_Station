@@ -63,7 +63,7 @@ void newFile(String& fileName)
   File dataFile = SD.open(fileName, FILE_WRITE);
   if(dataFile)
   {
-    dataFile.println("WAST, T, RH, QFE");
+    dataFile.println("WAST,T,RH,QFE");
     dataFile.close();
   }
   else

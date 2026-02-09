@@ -21,6 +21,7 @@ Version 1.3
 Version 1.4
 - State machine implemented to help timing of measurements and logging data.
 - Temporarily removed OLED functionality to stop BMP interference.
+- All components seem to work when running at 3.3v instead of 5v
 
 */
 //--------------------------------------------------------------------
@@ -54,8 +55,7 @@ const unsigned long STATE_DELAY = 20;
 static unsigned long stateTimeStamp = 0;
 const int chipSelect = 4;
 unsigned long now;
-int lastTemp, lastHumid = 0;
-float lastPress = 0.0f;
+float lastTemp, lastHumid, lastPress = 0.0f;
 RTCTime currentTime;
 
 enum SampleState
@@ -81,7 +81,7 @@ void setup()
     Serial.println("Pressure Sensor Error");
   }
   initialiseSD(chipSelect);
-  //startDisplay(display);
+  startDisplay(display);
   RTC.begin();
 
   //Start hard-coded time
@@ -125,9 +125,9 @@ void loop()
 
   else if(sampleState == SampleState::BUS_IDLE && now - stateTimeStamp >= STATE_DELAY)
   {
-    /*
+    
     //Only update the measurements that change (should avoid sending too much data over SDA hopefully)
-    if(currentWeather.ambAirTemp != lastTemp)
+    if(fabs(currentWeather.ambAirTemp - lastTemp) > 0.1f)
     {
       Serial.println("Updating Temp");
       updateTemp(display, currentWeather.ambAirTemp);
@@ -135,7 +135,7 @@ void loop()
     }
       
     
-    if(currentWeather.humidity != lastHumid)
+    if(fabs(currentWeather.humidity - lastHumid) > 0.1f)
     {
       Serial.println("Updating Humid");
       updateHumid(display, currentWeather.humidity);
@@ -149,8 +149,8 @@ void loop()
       updatePress(display, currentWeather.pressureHpa);
       lastPress = currentWeather.pressureHpa;
     }
-    */
-    displayToConsole(currentWeather);
+    
+    //displayToConsole(currentWeather);
       
     stateTimeStamp = now;
     sampleState = SampleState::DISPLAY_COMPLETED;

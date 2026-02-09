@@ -18,17 +18,17 @@ void startDisplay(Oled_Screen& display)
   display.print("Pres: ");
 }
 //--------------------------------------------------------------------
-void updateTemp(Oled_Screen& display, const int& newTemp)
+void updateTemp(Oled_Screen& display, const float& newTemp)
 {
   display.setCursor(6, 0);
-  display.print(newTemp);
+  display.print(newTemp, 0);
   display.print("C");
 }
 //--------------------------------------------------------------------
-void updateHumid(Oled_Screen& display, const int& newHumid)
+void updateHumid(Oled_Screen& display, const float& newHumid)
 {
   display.setCursor(7, 10);
-  display.print(newHumid);
+  display.print(newHumid, 0);
   display.print("%");
 }
 //--------------------------------------------------------------------

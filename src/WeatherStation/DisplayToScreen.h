@@ -14,8 +14,8 @@
 void startDisplay(Oled_Screen& display);
 
 //Update respective measurement from WeatherRecord if values change
-void updateTemp(Oled_Screen& display, const int& newTemp);
-void updateHumid(Oled_Screen& display, const int& newHumid);
+void updateTemp(Oled_Screen& display, const float& newTemp);
+void updateHumid(Oled_Screen& display, const float& newHumid);
 void updatePress(Oled_Screen& display, const float& newPress);
 
 //Displaying to console for testing purposes
