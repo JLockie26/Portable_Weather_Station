@@ -30,12 +30,14 @@ Version 1.4
 #include <DHT.h>
 #include <Seeed_BMP280.h>
 #include <SD.h>
+#include "WiFiS3.h"
 //--------------------------------------------------------------------
 #include "WeatherStruct.h"
 #include "SensorCollection.h"
 #include "DisplayToScreen.h"
 #include "SensorLogging.h"
 #include "RTC.h"
+#include "ConnectToWiFi.h"
 //--------------------------------------------------------------------
 #define SERIALPORT 9600 //Port number Arduino communicates to PC via serial
 #define DHTTYPE DHT11 //Type of DHT sensor being used
@@ -57,6 +59,10 @@ const int chipSelect = 4;
 unsigned long now;
 float lastTemp, lastHumid, lastPress = 0.0f;
 RTCTime currentTime;
+int wifiStatus = WL_IDLE_STATUS;
+int attemptLimit = 3;
+int connectionAttempts = 0;
+bool usingWifi = false;
 
 enum SampleState
 {
@@ -87,6 +93,30 @@ void setup()
   //Start hard-coded time
   RTCTime startTime(28, Month::JANUARY, 2025, 12, 0, 0, DayOfWeek::SATURDAY, SaveLight::SAVING_TIME_INACTIVE);
   RTC.setTime(startTime);
+
+  //Attempt WiFi connection
+  usingWifi = checkWifiModule();
+  while(connectionAttempts < attemptLimit)
+  {
+
+    wifiStatus = connectToNetwork();
+
+    if(wifiStatus == WL_CONNECTED)
+    {
+      Serial.println("WiFi Connection Success!");
+      usingWifi = true;
+      break;
+    }
+
+    connectionAttempts++;
+    Serial.print("Connection failed, attempt: ");
+    Serial.println(connectionAttempts);
+  }
+  if(connectionAttempts >= attemptLimit)
+  {
+    usingWifi = false;
+    Serial.println("Too many failed attempts, program will not use wifi");
+  }
 
   //Begin initial log
   lastLog = millis() - LOGCLOCK;

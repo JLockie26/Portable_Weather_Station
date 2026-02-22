@@ -43,5 +43,12 @@ cmake-build-*/
 *.user
 *.bak
 
+# Wifi Credentials
+**/wifi_secrets.h
+**/arduino_secrets.h
+
+# Server Credentials
+**/server_secrets.h
+
 # === Git ===
 .gitignore~
