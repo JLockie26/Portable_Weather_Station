@@ -50,5 +50,8 @@ cmake-build-*/
 # Server Credentials
 **/server_secrets.h
 
+# Weather Log JSON File
+**/weatherLog.json
+
 # === Git ===
 .gitignore~

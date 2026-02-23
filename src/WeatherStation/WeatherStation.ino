@@ -38,6 +38,7 @@ Version 1.4
 #include "SensorLogging.h"
 #include "RTC.h"
 #include "ConnectToWiFi.h"
+#include "ClientToServer.h"
 //--------------------------------------------------------------------
 #define SERIALPORT 9600 //Port number Arduino communicates to PC via serial
 #define DHTTYPE DHT11 //Type of DHT sensor being used
@@ -63,6 +64,8 @@ int wifiStatus = WL_IDLE_STATUS;
 int attemptLimit = 3;
 int connectionAttempts = 0;
 bool usingWifi = false;
+WiFiClient client;
+bool clientConnected = false;
 
 enum SampleState
 {
@@ -71,7 +74,8 @@ enum SampleState
   BMP_COLLECTED,
   BUS_IDLE,
   DISPLAY_COMPLETED,
-  COMPLETE
+  TIME_LOGGED,
+  SD_LOGGED
 };
 SampleState sampleState = SampleState::IDLE;
 //--------------------------------------------------------------------
@@ -191,14 +195,32 @@ void loop()
     Serial.println("Logging Time");
     collectDateTime(currentWeather, currentTime);
     stateTimeStamp = now;
-    sampleState = SampleState::COMPLETE;
+    sampleState = SampleState::TIME_LOGGED;
   }
 
-  else if(sampleState == SampleState::COMPLETE && now - stateTimeStamp >= STATE_DELAY)
+  else if(sampleState == SampleState::TIME_LOGGED && now - stateTimeStamp >= STATE_DELAY)
   {
     Serial.println("Logging to SD Card");
     logWeatherData(currentWeather);
     lastLog = now;
+    sampleState = SampleState::SD_LOGGED;
+  }
+
+  else if(sampleState == SampleState::SD_LOGGED && now - stateTimeStamp >= STATE_DELAY)
+  {
+    if(usingWifi) //Only try connecting to server if logged into wifi
+    {
+      clientConnected = connectToServer(client); //Attempt server connection
+      if(clientConnected)
+      {
+        //Post data to server then disconnect
+        postData(client, currentWeather);
+        readResponse(client);
+        clientConnected = disconnectFromServer(client);
+      }
+    }
+    Serial.println("Sample Cycle Completed");
     sampleState = SampleState::IDLE;
   }
+
 }

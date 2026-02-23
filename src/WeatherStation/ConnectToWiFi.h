@@ -1,7 +1,7 @@
 //ConnectToWifi.h - Definition file for functions related to connecting to local network
 /*
 Much of this code has been extraced from the WiFiWebClient tutorial provided by Arduino.
-I have modularised the code and provided my own comments to show my understanding of the WiFiS3 library.
+I have slightly modified and modularised the code and provided my own comments to show my understanding of the WiFiS3 library.
 To find this exact tutorial and more, please follow the link below:
 https://docs.arduino.cc/tutorials/uno-r4-wifi/wifi-examples/#wi-fi-web-client
 */

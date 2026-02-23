@@ -2,7 +2,6 @@
 //--------------------------------------------------------------------
 #include "ConnectToWiFi.h"
 //--------------------------------------------------------------------
-
 bool checkWifiModule()
 {
   String fv = WiFi.firmwareVersion();
@@ -24,7 +23,7 @@ bool checkWifiModule()
 
   return true;
 }
-
+//--------------------------------------------------------------------
 int connectToNetwork()
 {
   char ssid[] = SECRET_SSID;
@@ -40,5 +39,4 @@ int connectToNetwork()
 
   return status;
 }
-
 //--------------------------------------------------------------------
