@@ -23,6 +23,14 @@ Version 1.4
 - Temporarily removed OLED functionality to stop BMP interference.
 - All components seem to work when running at 3.3v instead of 5v
 
+Version 1.5
+- Implemented WiFiS3 library
+- Implemented functions to handle local network connection and data transfer over HTTP
+- Refactored setup to attempt network connection
+- Refactored loop to connect to server if local connection is established
+- User will need to provide their own wifi_secrets.h and sever_secrets.h files
+- Assumed that user is connecting to a WPA/WPA2 network
+
 */
 //--------------------------------------------------------------------
 #include <Wire.h>
