@@ -6,44 +6,77 @@ The initial assignment had students take weather data produced by Murdoch Univer
 Goals of this repository:
 - Show progression of features over time.
 - Demonstrate and revise knowledge of OOP, Data Structures & Abstraction, and Web Development.
-- Learn and understand more about computer hardware and systems programming.
+- Learn and understand more about systems programming, web programming, client-server architecture, and electronics
+
+## Project Status
+**Current Iteration** v0.2 - Arduino to Node.js Integration
+
+**Status:** Intermittent Development
+
+Development will be slowed as classes will be taking up most of my time. Status will return to active development in semester break, around end of May.
 
 
-## Features (current iteration)
+## Features
 - Reads temperature(Celsius), humidity, and air pressure(Hectopascals).
 - Logs measurements to SD Card
-- OLED functionality temporarily removed. Screen was causing interference issues with BMP280 sensor.
+- Display current measurements to OLED screen
+- Sends data via HTTP POST to a Node.js server
+- Stores readings in a JSON log file
+- Serves a basic frontend for viewing recent readings
+
+Learn how to set up the project [here](./docs/projectsetup.md)
+
+## Architecture Overview
+
+Arduino -> HTTP POST -> Node.js Server -> JSON Storage -> Frontend Fetch request to Client
+
+## Current Limitations
+- Race conditions exist. If timed right, server may not update live weather.
+- No Database usage
+- Limited to no API authentication or rate limiting
+- Minimal client-side and server-side validation
+- Past weather logs not displayed yet
+- Local network functionality only
+
+## Roadmap
+
+### v0.3
+- Improve client and server validation and security
+- Improve and update client web-page functionality
+- Add structured logging
+- Refactor usage of SD card module and OLED module
+
+### v0.4
+- Implement database such as MongoDB or MySQL, replace JSON  storage
+- Implement retention policies and security
+- Implement historical visualisation of data, comparisons, and correlation
+
+### v0.5 
+- Consider handling more Arduino stations to create a dense data map of weather for a local area
+- Consider adding more sensors, such as rain detection, air quality, soil humidity, etc
+- Consider comparison of local data to other weather APIs in same location
 
 
 ## Repository Structure
 ```
-WeatherStation_Project/
-├───docs
-├───src
-│   └───WeatherStation
-└───examples
-    ├───DHTtester_NoKit
-    ├───BaroTest_NoKit
-    └───ReadWrite
+Portable_Weather_Station
+   ├───docs
+   └───src
+       ├───WeatherStation
+       └───Node Server
+           ├───data
+           ├───public
+           │   ├───css
+           │   ├───js
+           │   └───html
+           ├───routes
+           └───utils
 ```
 
 
-## Getting Started
-1. Install Arduino IDE. Used to write .ino files and upload to Arduino. Visual Studio and VSCode have been used to write code outside .ino file. (There is a VSCode extension to write and upload to Arduino, but for beginners sake, Arduino IDE is best option)
-2. Install required libraries via Arduino IDE (Recommended) or download:
-    - [Grove_Temperature_And_Humidity_Sensor](https://github.com/Seeed-Studio/Grove_Temperature_And_Humidity_Sensor)
-    - [Grove_-_Barometer_Sensor_BMP280](https://github.com/Seeed-Studio/Grove_BMP280)
-    - Wire Library - This is included with Arduino IDE.
-    - [u8g2 Library - For OLED Display](https://github.com/olikraus/u8g2)
-    - [SD by Arduino & Sparkfun](https://github.com/arduino-libraries/SD)
-    - RTC library - Included once Arduino R4 WiFi board is detected by Arduino IDE
-3. Download or clone repo.
-4. Connect components (wirechart WIP)
-5. Open src/WeatherStation.ino and upload to arduino!
 
-
-
-## Hardware Used
+## Technologies Used
+### Arduino Device (C++)
 - Arduino Uno R4 WiFi
 - Arduino Sensor Kit or the following sensors:
     - [Grove Base Shield](https://wiki.seeedstudio.com/Base_Shield_V2/)
@@ -52,10 +85,7 @@ WeatherStation_Project/
     - [Grove OLED Display 0.96 inch](https://wiki.seeedstudio.com/Grove-OLED_Display_0.96inch/)
     - [XC4386 SD Card Module](https://media.jaycar.com.au/product/resources/XC4386_manualMain_78737.pdf)
 
-
-## Future Additions
-- ~~SD card logging - To write to a CSV file that will be processed on uni assignment program~~(program will not be included in repo as to avoid academic misconduct)
-- Error logs displayed on OLED screen for when hooked up to battery pack
-- Wireless transmission of weather data to web server
-- Storing, processing, and comparing weather data on web server
-- Sensor upgrades & additional sensors (air quality, rain detection, soil humidity, etc)
+### Backend
+- Node.js
+- JSON file storage
+- HTML, CSS, Javascript

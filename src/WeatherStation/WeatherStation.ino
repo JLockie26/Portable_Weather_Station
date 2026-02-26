@@ -23,6 +23,14 @@ Version 1.4
 - Temporarily removed OLED functionality to stop BMP interference.
 - All components seem to work when running at 3.3v instead of 5v
 
+Version 1.5
+- Implemented WiFiS3 library
+- Implemented functions to handle local network connection and data transfer over HTTP
+- Refactored setup to attempt network connection
+- Refactored loop to connect to server if local connection is established
+- User will need to provide their own wifi_secrets.h and sever_secrets.h files
+- Assumed that user is connecting to a WPA/WPA2 network
+
 */
 //--------------------------------------------------------------------
 #include <Wire.h>
@@ -30,12 +38,15 @@ Version 1.4
 #include <DHT.h>
 #include <Seeed_BMP280.h>
 #include <SD.h>
+#include "WiFiS3.h"
 //--------------------------------------------------------------------
 #include "WeatherStruct.h"
 #include "SensorCollection.h"
 #include "DisplayToScreen.h"
 #include "SensorLogging.h"
 #include "RTC.h"
+#include "ConnectToWiFi.h"
+#include "ClientToServer.h"
 //--------------------------------------------------------------------
 #define SERIALPORT 9600 //Port number Arduino communicates to PC via serial
 #define DHTTYPE DHT11 //Type of DHT sensor being used
@@ -57,6 +68,12 @@ const int chipSelect = 4;
 unsigned long now;
 float lastTemp, lastHumid, lastPress = 0.0f;
 RTCTime currentTime;
+int wifiStatus = WL_IDLE_STATUS;
+int attemptLimit = 3;
+int connectionAttempts = 0;
+bool usingWifi = false;
+WiFiClient client;
+bool clientConnected = false;
 
 enum SampleState
 {
@@ -65,7 +82,8 @@ enum SampleState
   BMP_COLLECTED,
   BUS_IDLE,
   DISPLAY_COMPLETED,
-  COMPLETE
+  TIME_LOGGED,
+  SD_LOGGED
 };
 SampleState sampleState = SampleState::IDLE;
 //--------------------------------------------------------------------
@@ -87,6 +105,30 @@ void setup()
   //Start hard-coded time
   RTCTime startTime(28, Month::JANUARY, 2025, 12, 0, 0, DayOfWeek::SATURDAY, SaveLight::SAVING_TIME_INACTIVE);
   RTC.setTime(startTime);
+
+  //Attempt WiFi connection
+  usingWifi = checkWifiModule();
+  while(connectionAttempts < attemptLimit)
+  {
+
+    wifiStatus = connectToNetwork();
+
+    if(wifiStatus == WL_CONNECTED)
+    {
+      Serial.println("WiFi Connection Success!");
+      usingWifi = true;
+      break;
+    }
+
+    connectionAttempts++;
+    Serial.print("Connection failed, attempt: ");
+    Serial.println(connectionAttempts);
+  }
+  if(connectionAttempts >= attemptLimit)
+  {
+    usingWifi = false;
+    Serial.println("Too many failed attempts, program will not use wifi");
+  }
 
   //Begin initial log
   lastLog = millis() - LOGCLOCK;
@@ -161,14 +203,32 @@ void loop()
     Serial.println("Logging Time");
     collectDateTime(currentWeather, currentTime);
     stateTimeStamp = now;
-    sampleState = SampleState::COMPLETE;
+    sampleState = SampleState::TIME_LOGGED;
   }
 
-  else if(sampleState == SampleState::COMPLETE && now - stateTimeStamp >= STATE_DELAY)
+  else if(sampleState == SampleState::TIME_LOGGED && now - stateTimeStamp >= STATE_DELAY)
   {
     Serial.println("Logging to SD Card");
     logWeatherData(currentWeather);
     lastLog = now;
+    sampleState = SampleState::SD_LOGGED;
+  }
+
+  else if(sampleState == SampleState::SD_LOGGED && now - stateTimeStamp >= STATE_DELAY)
+  {
+    if(usingWifi) //Only try connecting to server if logged into wifi
+    {
+      clientConnected = connectToServer(client); //Attempt server connection
+      if(clientConnected)
+      {
+        //Post data to server then disconnect
+        postData(client, currentWeather);
+        readResponse(client);
+        clientConnected = disconnectFromServer(client);
+      }
+    }
+    Serial.println("Sample Cycle Completed");
     sampleState = SampleState::IDLE;
   }
+
 }
