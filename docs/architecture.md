@@ -22,6 +22,20 @@ Coding for the weather station in current iteration is simple and introduces use
         - Disconnect from server
 8. End loop
 
+### Current Sever Flow
+1. Create an asynchronous server
+2. Listen for following requests:
+    - Client Page
+        - Serve index.html and other static files requested from client
+    - Client live weather upates
+        - Serve latest entry from weatherLog.JSON
+    - POST from Arduino client
+        - If weatherLog.JSON does not exist:
+            - Create empty weatherLog.JSON file
+        - Read in weatherLog.JSON
+        - Append POST body to JSON object
+        - Write new JSON to weatherLog.JSON
+
 ## WeatherRecord Struct
 A data structure that will aggregate all sensor data to be stored, displayed, and later transmitted. Structure will be active and in use next iteration.
 - ambAirTemp: A float to store temperature in degrees celcius
@@ -36,17 +50,3 @@ A data structure that will store the values representing date and time gathered 
 - day: An integer to store a day value (1 - 31).
 - hour: An integer to store an hour value (0 - 23)
 - minute: An integer to store a minute value (0 - 59).
-
-### Current Sever Flow
-1. Create an asynchronous server
-2. Listen for following requests:
-    - Client Page
-        - Serve index.html and other static files requested from client
-    - Client live weather upates
-        - Serve latest entry from weatherLog.JSON
-    - POST from Arduino client
-        - If weatherLog.JSON does not exist:
-            - Create empty weatherLog.JSON file
-        - Read in weatherLog.JSON
-        - Append POST body to JSON object
-        - Write new JSON to weatherLog.JSON
