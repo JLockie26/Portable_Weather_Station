@@ -2,6 +2,9 @@
  * @author Jordan Locke
  * @version 1.0
  * @brief A script that routes Arduino POST requests
+ * 
+ * @todo
+ * - Consider a better sorting system to take in more data, for now, could use multiple JSON files for different years, or simply move straight to a database
  */
 
 const { collectRequestBody, appendWeatherFile } = require('../utils/requestParser');

@@ -13,9 +13,9 @@ async function updateLiveWeather() {
         let response = await fetch('/api/live-weather/');
         if(!response.ok) {
             console.log("Some Error Occured");
-            tempStat.textContent = "undefined";
-            humidStat.textContent = "undefined";
-            pressStat.textContent = "undefined";
+            tempStat.textContent = "Offline";
+            humidStat.textContent = "Offline";
+            pressStat.textContent = "Offline";
             return;
         }
 
