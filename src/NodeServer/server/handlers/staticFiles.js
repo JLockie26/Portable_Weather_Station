@@ -2,6 +2,8 @@
  * @author Jordan Locke
  * @version 1.0
  * @brief A script that handles any static files the client may request (html, css, js for now)
+ * 
+ * @todo consider separating this handler into separate handlers for each file type
  */
 
 const path = require('path');
