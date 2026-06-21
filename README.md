@@ -11,9 +11,9 @@ Goals of this repository:
 ## Project Status
 **Current Iteration** v0.2 - Arduino to Node.js Integration
 
-**Status:** Intermittent Development
+**Status:** Active Development
 
-Development will be slowed as classes will be taking up most of my time. Status will return to active development in semester break, around end of May.
+Development is now active and implementations of roadmap will begin! No release schedule is currently in place as I will be working around job schedule, but I plan to polish off a lot of this project before semester starts end of July.
 
 
 ## Features
