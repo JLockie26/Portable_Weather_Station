@@ -3,7 +3,7 @@
  * @version 1.0
  * @brief A script to parse request body 
  */
-
+"use strict"
 const fs = require('fs').promises;
 
 function collectRequestBody(req) {

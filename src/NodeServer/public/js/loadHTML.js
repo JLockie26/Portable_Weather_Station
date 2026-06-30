@@ -9,7 +9,7 @@
 async function getHTML(requestedPage){
 
     console.log("ATTEMPTING TO GET DYNAMIC HTML...");
-    const contentArea = $('#displayContent');
+    const contentArea = $('.displayContent');
     
 
     //Try to fetch requsted HTML file from server

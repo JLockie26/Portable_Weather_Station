@@ -1,0 +1,10 @@
+/*
+Author: Jordan
+Version 0.1
+Brief: Styling for the live weather page. Styles all components that appear within the display content section
+*/
+
+/*Live Stat sub-sections*/
+.liveStat{
+    background-color: darkgray;
+}

@@ -5,7 +5,7 @@
  * @brief Recieves a request and finds the request handle and calls appropriate handler. If none found, responds to client with 404 error
  */
 
-"using strict"
+"use strict"
 
 function route(req, res, handle, pathname){
 

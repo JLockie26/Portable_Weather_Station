@@ -12,6 +12,7 @@
  * - Use architecture created in web programming class
 
  */
+"use strict"
 
 const http = require('http');
 const url = require('url');

@@ -1,0 +1,95 @@
+/*
+Author: Jordan Locke
+Version 0.1
+Brief: Styling of the base index page. Styles background, navbar, content section, and footer
+*/
+
+body, html{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/*Background image mobile*/
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    background-image: url(../img/mobileBackground.jpg);
+    background-size: cover;
+    background-position: center;
+    filter: blur(4px);
+    z-index: -1;
+    
+}
+
+@media only screen and (min-width: 400px){
+    /*Background image desktop (400px or larger)*/
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+
+        background-image: url(../img/desktopBackground.jpg);
+        background-size: cover;
+        background-position: center;
+        filter: blur(4px);
+        z-index: -1;
+    
+    }
+}
+
+/*General body decoration*/
+body {
+    font-family: Arial, sans-serif;
+    background-color: darkgray;
+}
+
+/*Navigation Bar*/
+#navbar {
+    background-color: rgba(0, 100, 153 , 0.75);
+    color: white;
+    display: flex;
+    justify-content: left;
+    gap: 20px;
+    padding-left: 10px;
+}
+
+#navbar .navBtn {
+    font-family: Arial, sans-serif;
+    color: white;
+    background-color: rgba(0, 100, 153 , 0);
+    border: none;
+    border-radius: 25px;
+    transition-duration: 0.5s;
+}
+
+#navbar button:hover {
+    background-color: rgb(255, 255, 255);
+    color: black;
+}
+
+/*Dynamic Content Section*/
+.displayContent {
+    background-color: rgba(255, 255, 255, 1);
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    height: auto;
+    overflow-x: auto;
+    margin: 20px auto;
+}
+
+/*Footer*/
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(0, 100, 153, 0.75);
+    color: white;
+    justify-content: center;
+    height: 7.5%;
+    display: flex;
+}
