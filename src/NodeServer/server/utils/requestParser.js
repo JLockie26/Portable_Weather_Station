@@ -23,8 +23,8 @@ function collectRequestBody(req) {
 }
 
 async function appendWeatherFile(body) {
-    const path = "./data/weatherLog.json";
-    await fs.mkdir("./data", {recursive: true}); //Ensure that directory exists
+    const path = "server/data/weatherLog.json";
+    await fs.mkdir("server/data", {recursive: true}); //Ensure that directory exists
     let bodyJSON;
 
     //Check if file exists, create file if not then read

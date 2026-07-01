@@ -10,13 +10,13 @@
 "use strict"
 
 const fs = require('fs').promises;
-const resMsg = require('../utils/resMsg');
+const resMsg = require('../utils/resMsg').resMsg;
 const { readWeatherFile } = require('../utils/requestParser');
 
 async function handleLiveWeather(req, res, pathname) {
-
-    const path = "./data/weatherLog.json";
-    await fs.mkdir("./data", {recursive: true}); //Ensure that directory exists
+    console.log('HANDLE LIVE WEATHER');
+    const path = "server/data/weatherLog.json";
+    await fs.mkdir("server/data/", {recursive: true}); //Ensure that directory exists
 
     //Try to read in weather log and respond with latest log. If any error occurs, send undefined rather than redirecting from home page
     try {
@@ -25,10 +25,8 @@ async function handleLiveWeather(req, res, pathname) {
         res.end(JSON.stringify(weatherLogJSON[weatherLogJSON.length - 1]));
         console.log("JSON sent to client");
     } catch (err) {
-        const errorJSON = {temp: "undefined", humid: "undefined", press: "undefined"};
-        res.writeHead(500);
-        res.end(JSON.stringify(errorJSON));
-        console.log("JSON not sent");
+        console.error(err);
+        resMsg(res, 500, 'Weather Station Offline');
     }
 }
 
