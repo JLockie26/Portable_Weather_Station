@@ -5,28 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/liveWeatherStyle.css">
+    <link rel="stylesheet" href="./css/weatherHistoryStyle.css">
     <title>Arduino Weather Dashboard</title>
 </head>
 <body>
-    <div id="navbar">
-        <h1 class="navtext">Arduino Weather Dashboard</h1>
-        <button class="navBtn" id="liveWeather" title="Check Live Weather Readings" data-page="/html/liveweather.html">
-            Live Weather
-        </button>
-        <button class="navBtn" id="weatherHistory" title="View Past Weather Data and Compare Dates" data-page="/html/weatherhistory.html">
-            Weather History
-        </button>
-        <button class="navBtn" id="aboutApp" title="Information about This Project" data-page="/html/aboutapp.html">
-            About Project
-        </button>
+    <div class="wrapper">
+        <div id="navbar">
+            <h1 class="navtext">Arduino Weather Dashboard</h1>
+            <button class="navBtn" id="liveWeather" title="Check Live Weather Readings" data-page="/html/liveweather.html">
+                Live Weather
+            </button>
+            <button class="navBtn" id="weatherHistory" title="View Past Weather Data and Compare Dates" data-page="/html/weatherhistory.html">
+                Weather History
+            </button>
+            <button class="navBtn" id="aboutApp" title="Information about This Project" data-page="/html/aboutapp.html">
+                About Project
+            </button>
+        </div>
+        <div class="displayContent">
+            <h1>Welcome</h1>
+            <p>This section is currently a work in progress. Check back in later to see updates!</p>
+        </div>
+        <div class="footer">
+            <p>MIT License Copyright (c) 2026 Jordan Locke</p>
+        </div>
     </div>
-    <div class="displayContent">
-        <h1>Welcome</h1>
-        <p>This section is currently a work in progress. Check back in later to see updates!</p>
-    </div>
-    <div class="footer">
-        <p>licensing/legal stuff here - Made by Jordan Locke 2026</p>
-    </div>
+
 
     <script src="https://code.jquery.com/jquery-4.0.0.slim.min.js" integrity="sha256-8DGpv13HIm+5iDNWw1XqxgFB4mj+yOKFNb+tHBZOowc=" crossorigin="anonymous"></script>
     <script type="module" src="./js/loadPages.js" defer></script>

@@ -6,5 +6,19 @@ Brief: Styling for the live weather page. Styles all components that appear with
 
 /*Live Stat sub-sections*/
 .liveStat{
-    background-color: darkgray;
+    border-style: solid;
+    border-radius: 20%;
+    border-color: black;
+    border-width: 1px;
+    width: auto;
+    text-align: center;
+}
+
+.statIcon{
+    width: 25%;
+}
+
+.liveDisplayGrid{
+    display: grid;
+    grid-template-columns: auto auto;
 }

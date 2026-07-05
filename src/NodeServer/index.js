@@ -23,7 +23,7 @@ handle['/img'] = require('./server/handlers/handleImg').reqImg;
 handle['/js'] = require('./server/handlers/handleJS').reqJS;
 handle['/html'] = require('./server/handlers/handleHTML').reqHTML;
 handle['/handleLiveWeather'] = require('./server/handlers/handleLiveData').handleLiveWeather;
-//handle['/api/weather/'] = require('./server/handlers/weatherRoute').handleWeatherPost;
+handle['/handleArduinoPost'] = require('./server/handlers/weatherRoute').handleWeatherPost;
 
 //Start server
 server.startServer(router.route, handle);
