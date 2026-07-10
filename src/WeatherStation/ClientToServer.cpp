@@ -33,7 +33,7 @@ void postData(WiFiClient& client, WeatherRecord &currentWeather)
   int contentLength = postBody.length();
 
   // Make a HTTP POST request
-  client.print("POST /api/weather/ HTTP/1.1\r\n");
+  client.print("POST /handleArduinoPost HTTP/1.1\r\n");
   client.print("Host: ");
   client.print(server);
   client.print(":");

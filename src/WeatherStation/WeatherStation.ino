@@ -1,6 +1,6 @@
 /*
 Author: Jordan Locke
-Version: 1.0
+Version: 0.1
 
 The main function/sketch for the portable weather station project. 
 This project is intended as an extension of a university assignment and a personal challenge to hone programming skills and learn electronics.
@@ -8,22 +8,22 @@ The purpose of this sketch is to initialise all pins and sensors connected to th
 C++ modules to collect, store, and display weather data.
 
 Author: Jordan Locke
-Version: 1.1
+Version: 0.2
 - Modularised functions for collecting and displaying weather data
 
-Version: 1.2
+Version: 0.3
 - Implemented SD card writing functionality
 
-Version 1.3
+Version 0.4
 - Changed graphics library so OLED screen isn't hogging Serial Data Line
 - Modified main logic so weather is only being collected, displayed, and logged every 5 mins (will be changed to 10 mins eventually).
 
-Version 1.4
+Version 0.5
 - State machine implemented to help timing of measurements and logging data.
 - Temporarily removed OLED functionality to stop BMP interference.
 - All components seem to work when running at 3.3v instead of 5v
 
-Version 1.5
+Version 0.6
 - Implemented WiFiS3 library
 - Implemented functions to handle local network connection and data transfer over HTTP
 - Refactored setup to attempt network connection

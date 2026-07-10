@@ -1,0 +1,54 @@
+/*
+Author: Jordan Locke
+Version: 0.1
+Brief: Styling for the live weather page. Styles all components that appear within the display content section
+
+Author: Jordan Locke
+Version: 0.2
+Brief: Implementing grid to organise components of each live stat container and to organise the layout of all live stat containers 
+*/
+
+/*Live Stat Container*/
+.liveStat{
+    border-style: solid;
+    border-radius: 20%;
+    border-color: black;
+    width: 70%;
+}
+
+/*Live Stat Components*/
+.statName{
+    width: max-content;
+    grid-area: title;
+}
+
+.statIcon{
+    grid-area: icon;
+    width: 100%;
+}
+
+.statValue{
+    grid-area: value;
+}
+
+/*Layout of Live Stat Components*/
+.statGrid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 
+    "title title"
+    "icon value";
+    gap: 1em;
+    justify-items: center;
+    justify-content: center;
+}
+
+
+/*Grid display of all live stat sub-sections*/
+.liveDisplayGrid{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1em;
+    justify-items: center;
+    justify-content: center;
+}

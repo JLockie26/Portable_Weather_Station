@@ -3,7 +3,8 @@
  * @author Jordan Locke
  * @version 0.1
  * @brief Handles incoming requests for JavaScript files
- * Extra security may be required for this section
+ * 
+ * @todo Extra security may be required for this section
  */
 "use strict"
 const fs = require('fs');

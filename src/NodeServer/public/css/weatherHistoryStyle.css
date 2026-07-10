@@ -1,0 +1,60 @@
+/*
+Author: Jordan Locke
+Version 0.1
+Brief: Styling of the weather history page, styles and positions the form to request weather records from past dates, 
+       as well as setting up areas to display table, graph, or both
+*/
+
+/*Form Section*/
+.formSection {
+    height: 10%;
+}
+
+.formGrid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: auto auto;
+    gap: 10px;
+}
+
+.buttonGroup {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.buttonGroup #submit, #reset {
+    font-family: Arial, sans-serif;
+    color: white;
+    background-color: rgba(0, 100, 153 , 1);
+    border: none;
+    transition-duration: 0.5s;
+    width: 25%;
+    height: 150%;
+}
+
+/*Results Section*/
+.resultsSection{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.tableSection{
+    width: 80%;
+}
+
+.weatherGraph{
+    width: 100%;
+}
+
+#weatherGraph{
+    width: 100%;
+    height: 500px;
+}
+
+.buttonGroup #submit:hover, #reset:hover{
+    background-color: rgb(0, 100, 153 , 0.75);
+}

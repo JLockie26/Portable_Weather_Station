@@ -1,17 +1,16 @@
 /**
  * @author Jordan Locke
- * @version 1.0
+ * @version 0.1
  * @brief A simple web server to develop understanding of Web Development, JavaScript, and Node JS.
  *        This web server will eventually serve a webpage / web application to client browsers, and receieve information from the Arduino weather station
  * 
  * @author Jordan Locke
- * @version 1.1
+ * @version 0.2
  * Refactored for a more modular design. Serve now started via index.js, which calls this script to pass request to router function
  * 
- * @todo Refactor server architecture
- * - Use architecture created in web programming class
 
  */
+"use strict"
 
 const http = require('http');
 const url = require('url');
