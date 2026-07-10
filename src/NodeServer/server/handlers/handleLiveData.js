@@ -5,7 +5,7 @@
  * 
  * @author Jordan Locke
  * @version 0.2
- * @brief Refactored to follow same standards as newer handlers
+ * @brief Refactored to follow same standards for handlers
  */
 "use strict"
 

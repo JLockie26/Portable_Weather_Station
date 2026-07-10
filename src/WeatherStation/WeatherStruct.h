@@ -6,14 +6,14 @@
 
 		/**
 		* @author Jordan Locke
-		* @version 02
+		* @version 0.2
 		* @typedef WeatherRecord
 		* @struct WeatherRecord
 		* @brief Stores weather data collected by Arduino sensors as well as date and time.
 		*				 Date and Time classes are now structs. RTC takes care of controlling date & time validation
 		*
 		*	@author Jordan Locke
-		*	@version 02
+		*	@version 0.2
 		*	@typedef DateTime
 		*	@struct DateTime
 		*	@brief Stores date time data collected by the RTC module
