@@ -1,5 +1,6 @@
 /*
 Author: Jordan Locke
+<<<<<<< Updated upstream
 Version: 0.1
 
 The main function/sketch for the portable weather station project. 
@@ -30,7 +31,18 @@ Version 0.6
 - Refactored loop to connect to server if local connection is established
 - User will need to provide their own wifi_secrets.h and sever_secrets.h files
 - Assumed that user is connecting to a WPA/WPA2 network
+=======
+Current Version: 0.6
+Please read device-CHANGELOG.md for previous implementations
+>>>>>>> Stashed changes
 
+@bug No fallback when WiFi is active but server is not
+@bug Only lastPress is initialized as 0
+@todo Do something with sensor failures, this ties into creating error codes that display on screen
+@todo Revamp current screen functionality, replace with error codes / status
+@todo Consider timing re-connects as to not stall device if network is down for a while
+@todo Main file has a lot of globals, consider creating a controller module to neaten up main
+@todo Implement function to send logs in batch once device reconnects to wifi and server (do this once bugs are fixed and screen displays error codes)
 */
 //--------------------------------------------------------------------
 #include <Wire.h>
@@ -82,8 +94,7 @@ enum SampleState
   BMP_COLLECTED,
   BUS_IDLE,
   DISPLAY_COMPLETED,
-  TIME_LOGGED,
-  SD_LOGGED
+  TIME_LOGGED
 };
 SampleState sampleState = SampleState::IDLE;
 //--------------------------------------------------------------------
@@ -102,32 +113,32 @@ void setup()
   startDisplay(display);
   RTC.begin();
 
-  //Start hard-coded time
+  //Start hard-coded time(REMOVE THIS, REPLACE WITH SNTP/TIME REQUEST FROM SERVER)
   RTCTime startTime(28, Month::JANUARY, 2025, 12, 0, 0, DayOfWeek::SATURDAY, SaveLight::SAVING_TIME_INACTIVE);
   RTC.setTime(startTime);
 
   //Attempt WiFi connection
   usingWifi = checkWifiModule();
-  while(connectionAttempts < attemptLimit)
+  if(usingWifi)
   {
-
-    wifiStatus = connectToNetwork();
-
-    if(wifiStatus == WL_CONNECTED)
+    while(connectionAttempts < attemptLimit && wifiStatus != WL_CONNECTED)
     {
-      Serial.println("WiFi Connection Success!");
-      usingWifi = true;
-      break;
+      wifiStatus = connectToNetwork();
+      connectionAttempts++;
+      if(wifiStatus != WL_CONNECTED)
+      {
+        Serial.print("Connection failed, attempt: ");
+        Serial.println(connectionAttempts);
+      }
     }
-
-    connectionAttempts++;
-    Serial.print("Connection failed, attempt: ");
-    Serial.println(connectionAttempts);
+    if(connectionAttempts >= attemptLimit)
+    {
+      Serial.println("Too many failed attempts, program will retry later");
+    }
   }
-  if(connectionAttempts >= attemptLimit)
+  else 
   {
-    usingWifi = false;
-    Serial.println("Too many failed attempts, program will not use wifi");
+    Serial.println("Device will not use wifi");
   }
 
   //Begin initial log
@@ -208,15 +219,7 @@ void loop()
 
   else if(sampleState == SampleState::TIME_LOGGED && now - stateTimeStamp >= STATE_DELAY)
   {
-    Serial.println("Logging to SD Card");
-    logWeatherData(currentWeather);
-    lastLog = now;
-    sampleState = SampleState::SD_LOGGED;
-  }
-
-  else if(sampleState == SampleState::SD_LOGGED && now - stateTimeStamp >= STATE_DELAY)
-  {
-    if(usingWifi) //Only try connecting to server if logged into wifi
+    if(wifiStatus == WL_CONNECTED) //Only try connecting to server if logged into wifi
     {
       clientConnected = connectToServer(client); //Attempt server connection
       if(clientConnected)
@@ -227,7 +230,22 @@ void loop()
         clientConnected = disconnectFromServer(client);
       }
     }
+    else if(wifiStatus != WL_CONNECTED || !usingWifi)
+    {
+      Serial.println("Logging to SD Card");
+      logWeatherData(currentWeather);
+      lastLog = now;
+
+      //Perform reconnect here
+      wifiStatus = connectToNetwork();
+      if(wifiStatus == WL_CONNECTED)
+      {
+        Serial.println("WiFi Connection Success!");
+        Serial.println("Sending SD Logs..."); //TESTING SUCCESS MESSAGE
+      }
+    }
     Serial.println("Sample Cycle Completed");
+    stateTimeStamp = now;
     sampleState = SampleState::IDLE;
   }
 
