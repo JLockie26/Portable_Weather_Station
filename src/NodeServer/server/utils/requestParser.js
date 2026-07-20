@@ -27,7 +27,7 @@ async function appendWeatherFile(body) {
     await fs.mkdir("server/data", {recursive: true}); //Ensure that directory exists
     let bodyJSON;
 
-    //Check if file exists, create file if not then read
+    //Check if file exists, create file if not, then read
     await checkFileExists(path);
     const weatherJSON = await readWeatherFile(path);
     
@@ -68,6 +68,7 @@ async function checkFileExists(path) {
 //Encapsulated read/write functions
 async function readWeatherFile(path) {
     try {
+        await checkFileExists(path);
         const data = await fs.readFile(path, "utf8");
         return JSON.parse(data);
     } catch (err) {

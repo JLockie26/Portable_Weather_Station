@@ -3,8 +3,6 @@ Author: Jordan Locke
 Current Version: 0.6
 Please read device-CHANGELOG.md for previous implementations
 
-@bug No fallback when WiFi is active but server is not
-@bug Only lastPress is initialized as 0
 @todo Do something with sensor failures, this ties into creating error codes that display on screen
 @todo Revamp current screen functionality, replace with error codes / status
 @todo Consider timing re-connects as to not stall device if network is down for a while
@@ -45,7 +43,9 @@ const unsigned long STATE_DELAY = 20;
 static unsigned long stateTimeStamp = 0;
 const int chipSelect = 4;
 unsigned long now;
-float lastTemp, lastHumid, lastPress = 0.0f;
+float lastTemp = 0.0f;
+float lastHumid = 0.0f;
+float lastPress = 0.0f;
 RTCTime currentTime;
 int wifiStatus = WL_IDLE_STATUS;
 int attemptLimit = 3;
@@ -153,7 +153,6 @@ void loop()
       updateTemp(display, currentWeather.ambAirTemp);
       lastTemp = currentWeather.ambAirTemp;
     }
-      
     
     if(fabs(currentWeather.humidity - lastHumid) > 0.1f)
     {
@@ -161,7 +160,6 @@ void loop()
       updateHumid(display, currentWeather.humidity);
       lastHumid = currentWeather.humidity;
     }
-      
 
     if(fabs(currentWeather.pressureHpa - lastPress) > 0.1f)
     {
@@ -169,8 +167,6 @@ void loop()
       updatePress(display, currentWeather.pressureHpa);
       lastPress = currentWeather.pressureHpa;
     }
-    
-    //displayToConsole(currentWeather);
       
     stateTimeStamp = now;
     sampleState = SampleState::DISPLAY_COMPLETED;
@@ -186,34 +182,52 @@ void loop()
 
   else if(sampleState == SampleState::TIME_LOGGED && now - stateTimeStamp >= STATE_DELAY)
   {
-    if(wifiStatus == WL_CONNECTED) //Only try connecting to server if logged into wifi
-    {
-      clientConnected = connectToServer(client); //Attempt server connection
-      if(clientConnected)
-      {
-        //Post data to server then disconnect
-        postData(client, currentWeather);
-        readResponse(client);
-        clientConnected = disconnectFromServer(client);
-      }
-    }
-    else if(wifiStatus != WL_CONNECTED || !usingWifi)
+    //Log to SD if not using WiFi or cannot connect to WiFi
+    if(wifiStatus != WL_CONNECTED)
     {
       Serial.println("Logging to SD Card");
       logWeatherData(currentWeather);
-      lastLog = now;
 
-      //Perform reconnect here
+      //Attempt reconnect
       wifiStatus = connectToNetwork();
       if(wifiStatus == WL_CONNECTED)
       {
         Serial.println("WiFi Connection Success!");
         Serial.println("Sending SD Logs..."); //TESTING SUCCESS MESSAGE
       }
+      else
+      {
+        Serial.println("Reconnection to WiFi failed");
+      }
+
+      endSampleCycle();
+      return;
     }
+
+    //Log to SD card in event of bad request or server connection failure
+    clientConnected = connectToServer(client);
+    if(!clientConnected)
+    {
+      Serial.println("Cannot Connect To Server - Logging to SD Card");
+      logWeatherData(currentWeather);
+      endSampleCycle();
+      return;
+    }
+
+    postData(client, currentWeather);
+    readResponse(client);
+    //Put response check here
+    clientConnected = disconnectFromServer(client);
+
+    endSampleCycle();
+  }
+  //End of Loop
+}
+
+void endSampleCycle() //This should eventually be moved into a sample state controller module. Main becoming wayy too cluttered
+{
     Serial.println("Sample Cycle Completed");
+    lastLog = now;
     stateTimeStamp = now;
     sampleState = SampleState::IDLE;
-  }
-
 }
