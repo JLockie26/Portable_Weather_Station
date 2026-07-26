@@ -18,11 +18,12 @@ Development is now intermittent / mostly inactive until end of year. Taking time
 
 ## Features
 - Reads temperature(Celsius), humidity, and air pressure(Hectopascals).
-- Logs measurements to SD Card
+- Stores measurements in appropriate data structure
 - Display current measurements to OLED screen
 - Sends data via HTTP POST to a Node.js server
+- Stores data in SD card in event of connection failure
 - Stores readings in a JSON log file
-- Serves a basic frontend for viewing recent readings
+- Serves a basic frontend for viewing live readings (reading history WIP)
 
 Learn how to set up the project [here](./docs/projectsetup.md)
 
