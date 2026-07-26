@@ -1,36 +1,13 @@
 /*
 Author: Jordan Locke
-Version: 0.1
+Current Version: 0.6
+Please read device-CHANGELOG.md for previous implementations
 
-The main function/sketch for the portable weather station project. 
-This project is intended as an extension of a university assignment and a personal challenge to hone programming skills and learn electronics.
-The purpose of this sketch is to initialise all pins and sensors connected to the Arduino before calling separate-
-C++ modules to collect, store, and display weather data.
-
-Author: Jordan Locke
-Version: 0.2
-- Modularised functions for collecting and displaying weather data
-
-Version: 0.3
-- Implemented SD card writing functionality
-
-Version 0.4
-- Changed graphics library so OLED screen isn't hogging Serial Data Line
-- Modified main logic so weather is only being collected, displayed, and logged every 5 mins (will be changed to 10 mins eventually).
-
-Version 0.5
-- State machine implemented to help timing of measurements and logging data.
-- Temporarily removed OLED functionality to stop BMP interference.
-- All components seem to work when running at 3.3v instead of 5v
-
-Version 0.6
-- Implemented WiFiS3 library
-- Implemented functions to handle local network connection and data transfer over HTTP
-- Refactored setup to attempt network connection
-- Refactored loop to connect to server if local connection is established
-- User will need to provide their own wifi_secrets.h and sever_secrets.h files
-- Assumed that user is connecting to a WPA/WPA2 network
-
+@todo Do something with sensor failures, this ties into creating error codes that display on screen
+@todo Revamp current screen functionality, replace with error codes / status
+@todo Consider timing re-connects as to not stall device if network is down for a while
+@todo Main file has a lot of globals, consider creating a controller module to neaten up main
+@todo Implement function to send logs in batch once device reconnects to wifi and server (do this once bugs are fixed and screen displays error codes)
 */
 //--------------------------------------------------------------------
 #include <Wire.h>
@@ -66,7 +43,9 @@ const unsigned long STATE_DELAY = 20;
 static unsigned long stateTimeStamp = 0;
 const int chipSelect = 4;
 unsigned long now;
-float lastTemp, lastHumid, lastPress = 0.0f;
+float lastTemp = 0.0f;
+float lastHumid = 0.0f;
+float lastPress = 0.0f;
 RTCTime currentTime;
 int wifiStatus = WL_IDLE_STATUS;
 int attemptLimit = 3;
@@ -82,8 +61,7 @@ enum SampleState
   BMP_COLLECTED,
   BUS_IDLE,
   DISPLAY_COMPLETED,
-  TIME_LOGGED,
-  SD_LOGGED
+  TIME_LOGGED
 };
 SampleState sampleState = SampleState::IDLE;
 //--------------------------------------------------------------------
@@ -102,32 +80,32 @@ void setup()
   startDisplay(display);
   RTC.begin();
 
-  //Start hard-coded time
+  //Start hard-coded time(REMOVE THIS, REPLACE WITH SNTP/TIME REQUEST FROM SERVER)
   RTCTime startTime(28, Month::JANUARY, 2025, 12, 0, 0, DayOfWeek::SATURDAY, SaveLight::SAVING_TIME_INACTIVE);
   RTC.setTime(startTime);
 
   //Attempt WiFi connection
   usingWifi = checkWifiModule();
-  while(connectionAttempts < attemptLimit)
+  if(usingWifi)
   {
-
-    wifiStatus = connectToNetwork();
-
-    if(wifiStatus == WL_CONNECTED)
+    while(connectionAttempts < attemptLimit && wifiStatus != WL_CONNECTED)
     {
-      Serial.println("WiFi Connection Success!");
-      usingWifi = true;
-      break;
+      wifiStatus = connectToNetwork();
+      connectionAttempts++;
+      if(wifiStatus != WL_CONNECTED)
+      {
+        Serial.print("Connection failed, attempt: ");
+        Serial.println(connectionAttempts);
+      }
     }
-
-    connectionAttempts++;
-    Serial.print("Connection failed, attempt: ");
-    Serial.println(connectionAttempts);
+    if(connectionAttempts >= attemptLimit)
+    {
+      Serial.println("Too many failed attempts, program will retry later");
+    }
   }
-  if(connectionAttempts >= attemptLimit)
+  else 
   {
-    usingWifi = false;
-    Serial.println("Too many failed attempts, program will not use wifi");
+    Serial.println("Device will not use wifi");
   }
 
   //Begin initial log
@@ -175,7 +153,6 @@ void loop()
       updateTemp(display, currentWeather.ambAirTemp);
       lastTemp = currentWeather.ambAirTemp;
     }
-      
     
     if(fabs(currentWeather.humidity - lastHumid) > 0.1f)
     {
@@ -183,7 +160,6 @@ void loop()
       updateHumid(display, currentWeather.humidity);
       lastHumid = currentWeather.humidity;
     }
-      
 
     if(fabs(currentWeather.pressureHpa - lastPress) > 0.1f)
     {
@@ -191,8 +167,6 @@ void loop()
       updatePress(display, currentWeather.pressureHpa);
       lastPress = currentWeather.pressureHpa;
     }
-    
-    //displayToConsole(currentWeather);
       
     stateTimeStamp = now;
     sampleState = SampleState::DISPLAY_COMPLETED;
@@ -208,27 +182,52 @@ void loop()
 
   else if(sampleState == SampleState::TIME_LOGGED && now - stateTimeStamp >= STATE_DELAY)
   {
-    Serial.println("Logging to SD Card");
-    logWeatherData(currentWeather);
-    lastLog = now;
-    sampleState = SampleState::SD_LOGGED;
-  }
-
-  else if(sampleState == SampleState::SD_LOGGED && now - stateTimeStamp >= STATE_DELAY)
-  {
-    if(usingWifi) //Only try connecting to server if logged into wifi
+    //Log to SD if not using WiFi or cannot connect to WiFi
+    if(wifiStatus != WL_CONNECTED)
     {
-      clientConnected = connectToServer(client); //Attempt server connection
-      if(clientConnected)
-      {
-        //Post data to server then disconnect
-        postData(client, currentWeather);
-        readResponse(client);
-        clientConnected = disconnectFromServer(client);
-      }
-    }
-    Serial.println("Sample Cycle Completed");
-    sampleState = SampleState::IDLE;
-  }
+      Serial.println("Logging to SD Card");
+      logWeatherData(currentWeather);
 
+      //Attempt reconnect
+      wifiStatus = connectToNetwork();
+      if(wifiStatus == WL_CONNECTED)
+      {
+        Serial.println("WiFi Connection Success!");
+        Serial.println("Sending SD Logs..."); //TESTING SUCCESS MESSAGE
+      }
+      else
+      {
+        Serial.println("Reconnection to WiFi failed");
+      }
+
+      endSampleCycle();
+      return;
+    }
+
+    //Log to SD card in event of bad request or server connection failure
+    clientConnected = connectToServer(client);
+    if(!clientConnected)
+    {
+      Serial.println("Cannot Connect To Server - Logging to SD Card");
+      logWeatherData(currentWeather);
+      endSampleCycle();
+      return;
+    }
+
+    postData(client, currentWeather);
+    readResponse(client);
+    //Put response check here
+    clientConnected = disconnectFromServer(client);
+
+    endSampleCycle();
+  }
+  //End of Loop
+}
+
+void endSampleCycle() //This should eventually be moved into a sample state controller module. Main becoming wayy too cluttered
+{
+    Serial.println("Sample Cycle Completed");
+    lastLog = now;
+    stateTimeStamp = now;
+    sampleState = SampleState::IDLE;
 }
