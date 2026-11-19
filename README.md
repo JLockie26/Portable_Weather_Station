@@ -1,20 +1,26 @@
 # Portable Arduino Weather Station
 
-This Arduino-based weather station project is a personal extension outside of a university assignment.
-The initial assignment had students take weather data produced by Murdoch University's weather station and process it in various ways. This project will initially focus on collecting the data for processing, before moving onto monitoring and comparing weather statistics via web-based application.
+An Arduino-based weather station and web application for recording local weather, displaying live metrics, and visualizing recorded measurements. The weather station component uses an Arduino sensor kit and open-source libraries to introduce myself to the concept of embedded systems and electronics. The web application component of this project uses a HTML/CSS/JS & Node.js stack for asynchronous handling and to streamline development with JavaScript. For now, no frameworks have been used for the web app. This is to keep the focus on the interaction between the application and weather station.
 
 Goals of this repository:
-- Show progression of features over time.
-- Demonstrate and revise knowledge of OOP, Data Structures & Abstraction, and Web Development.
-- Learn and understand more about systems programming, web programming, client-server architecture, and electronics
+- Dive into basic concepts of embedded systems
+- Expand knowledge about system integration and interoperability
+- Produce a system that can be easily deployed into an environment (i.e. backyard or window sill)
 
-## Project Status
-**Current Iteration** v0.2 - Arduino to Node.js Integration
+## Technologies Used
+### Arduino Device (C/C++)
+- Arduino Uno R4 WiFi
+- Arduino Sensor Kit or the following sensors:
+    - [Grove Base Shield](https://wiki.seeedstudio.com/Base_Shield_V2/)
+    - [Grove DHT11 Sensor](https://wiki.seeedstudio.com/Grove-TemperatureAndHumidity_Sensor/)
+    - [Grove BMP280 Sensor](https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BMP280/)
+    - [Grove OLED Display 0.96 inch](https://wiki.seeedstudio.com/Grove-OLED_Display_0.96inch/)
+    - [XC4386 SD Card Module](https://media.jaycar.com.au/product/resources/XC4386_manualMain_78737.pdf)
 
-**Status:** Intermittent Development
-
-Development is now intermittent / mostly inactive until end of year. Taking time to focus on my final units. Project features and scope may be subject to revision and review.
-
+### Web App
+- Node.js
+- JSON file storage
+- HTML, CSS, Javascript
 
 ## Features
 - Reads temperature(Celsius), humidity, and air pressure(Hectopascals).
@@ -26,6 +32,28 @@ Development is now intermittent / mostly inactive until end of year. Taking time
 - Serves a basic frontend for viewing live readings (reading history WIP)
 
 Learn how to set up the project [here](./docs/projectsetup.md)
+
+## The Process
+This project initially started as a tinkering project. I purchased an Arduino kit from a local electronics shop to learn more about electronics and how code interacts with hardware at a lower level.
+The original goal was to build a self contained system, that would display and store weather measurements. After learning more about web development, I decided to revise the goal to send data to a web server wirelessly.
+
+Early commits showcase the learning process of programming an Arduino, especially communicating with other sensors, displaying and logging measurements, and setting up timing so the device was functional on its own.
+
+After the device was working independently, I began working on the web server and WiFi connectivity for the weather station.
+
+--Project still in progress--
+
+## What I have Learnt
+- To be added
+
+## Live Demo
+- To be filmed & uploaded
+
+## Project Status
+**Current Iteration** v0.2 - Arduino to Node.js Integration
+
+**Status:** Active Development
+
 
 ## Architecture Overview
 
@@ -74,19 +102,3 @@ Portable_Weather_Station
            └───utils
 ```
 
-
-
-## Technologies Used
-### Arduino Device (C++)
-- Arduino Uno R4 WiFi
-- Arduino Sensor Kit or the following sensors:
-    - [Grove Base Shield](https://wiki.seeedstudio.com/Base_Shield_V2/)
-    - [Grove DHT11 Sensor](https://wiki.seeedstudio.com/Grove-TemperatureAndHumidity_Sensor/)
-    - [Grove BMP280 Sensor](https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BMP280/)
-    - [Grove OLED Display 0.96 inch](https://wiki.seeedstudio.com/Grove-OLED_Display_0.96inch/)
-    - [XC4386 SD Card Module](https://media.jaycar.com.au/product/resources/XC4386_manualMain_78737.pdf)
-
-### Backend
-- Node.js
-- JSON file storage
-- HTML, CSS, Javascript
