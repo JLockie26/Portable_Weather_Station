@@ -50,14 +50,18 @@ After the device was working independently, I began working on the web server an
 - To be filmed & uploaded
 
 ## Project Status
-**Current Iteration** v0.2 - Arduino to Node.js Integration
+**Current Iteration** 
+
+WebApp v0.2
+
+Weather Station v0.6
 
 **Status:** Active Development
 
 
 ## Architecture Overview
 
-Arduino -> HTTP POST -> Node.js Server -> JSON Storage -> Frontend Fetch request to Client
+Arduino -> HTTP POST -> Node.js Server -> JSON Storage -> Frontend Fetch request to Client (Visual Diagram in Progress)
 
 ## Current Limitations
 - Race conditions exist. If timed right, server may not update live weather.
@@ -69,36 +73,7 @@ Arduino -> HTTP POST -> Node.js Server -> JSON Storage -> Frontend Fetch request
 
 ## Roadmap
 
-### v0.3
+- Weather station code clean up
+- Refactor SD card and OLED screen usage
 - Improve client and server validation and security
-- Improve and update client web-page functionality
-- Add structured logging
-- Refactor usage of SD card module and OLED module
-
-### v0.4
-- Implement database such as MongoDB or MySQL, replace JSON  storage
-- Implement retention policies and security
-- Implement historical visualisation of data, comparisons, and correlation
-
-### v0.5 
-- Consider handling more Arduino stations to create a dense data map of weather for a local area
-- Consider adding more sensors, such as rain detection, air quality, soil humidity, etc
-- Consider comparison of local data to other weather APIs in same location
-
-
-## Repository Structure
-```
-Portable_Weather_Station
-   ├───docs
-   └───src
-       ├───WeatherStation
-       └───Node Server
-           ├───data
-           ├───public
-           │   ├───css
-           │   ├───js
-           │   └───html
-           ├───routes
-           └───utils
-```
-
+- Implement structured logging & data visualization
